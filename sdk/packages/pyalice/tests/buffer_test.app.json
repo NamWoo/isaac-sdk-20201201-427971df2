@@ -1,0 +1,78 @@
+{
+  "name": "buffer_test",
+  "modules": ["message_generators"],
+  "config": {
+    "cpp_image": {
+      "isaac.message_generators.ImageLoader": {
+        "tick_period": "2Hz",
+        "color_filename": "external/ml_test_data/giant-panda-224x224.png"
+      }
+    },
+    "py_image": {
+      "PyCodelet": {
+        "tick_period": "2Hz",
+        "color_filename": "external/ml_test_data/giant-panda-224x224.png",
+        "focal_length": [1023.5,1023.5],
+        "optical_center": [1023.5, 1023.5]
+      }
+    },
+    "py_reader": {
+      "PyCodelet": {
+        "tick_period": "2Hz"
+      }
+    }
+  },
+  "graph": {
+    "nodes": [
+      {
+        "name": "cpp_image",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "isaac.message_generators.ImageLoader",
+            "type": "isaac::message_generators::ImageLoader"
+          }
+        ]
+      },
+      {
+        "name": "py_image",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "PyCodelet",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ]
+      },
+      {
+        "name": "py_reader",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "PyCodelet",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "cpp_image/isaac.message_generators.ImageLoader/color",
+        "target": "py_reader/PyCodelet/rgb_image_1"
+      },
+      {
+        "source": "py_image/PyCodelet/color",
+        "target": "py_reader/PyCodelet/rgb_image_2"
+      }
+    ]
+  }
+}

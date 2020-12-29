@@ -1,0 +1,279 @@
+{
+  "name": "isaacsim",
+  "modules": [
+    "engine_tcp_udp",
+    "sight"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "output",
+            "type": "isaac::alice::TcpPublisher"
+          },
+          {
+            "name": "input",
+            "type": "isaac::alice::TcpSubscriber"
+          }
+        ]
+      },
+      {
+        "name": "transporter_0",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "output",
+            "type": "isaac::alice::TcpPublisher"
+          },
+          {
+            "name": "input",
+            "type": "isaac::alice::TcpSubscriber"
+          },
+          {
+            "name": "time_sync",
+            "type": "isaac::alice::TimeSynchronizer"
+          }
+        ]
+      },
+      {
+        "name": "transporter_1",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "output",
+            "type": "isaac::alice::TcpPublisher"
+          },
+          {
+            "name": "input",
+            "type": "isaac::alice::TcpSubscriber"
+          },
+          {
+            "name": "time_sync",
+            "type": "isaac::alice::TimeSynchronizer"
+          }
+        ]
+      },
+      {
+        "name": "transporter_2",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "output",
+            "type": "isaac::alice::TcpPublisher"
+          },
+          {
+            "name": "input",
+            "type": "isaac::alice::TcpSubscriber"
+          },
+          {
+            "name": "time_sync",
+            "type": "isaac::alice::TimeSynchronizer"
+          }
+        ]
+      },
+      {
+        "name": "station_0",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "output",
+            "type": "isaac::alice::TcpPublisher"
+          },
+          {
+            "name": "input",
+            "type": "isaac::alice::TcpSubscriber"
+          },
+          {
+            "name": "time_sync",
+            "type": "isaac::alice::TimeSynchronizer"
+          }
+        ]
+      },
+      {
+        "name": "station_1",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "output",
+            "type": "isaac::alice::TcpPublisher"
+          },
+          {
+            "name": "input",
+            "type": "isaac::alice::TcpSubscriber"
+          },
+          {
+            "name": "time_sync",
+            "type": "isaac::alice::TimeSynchronizer"
+          }
+        ]
+      },
+      {
+        "name": "station_2",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "output",
+            "type": "isaac::alice::TcpPublisher"
+          },
+          {
+            "name": "input",
+            "type": "isaac::alice::TcpSubscriber"
+          },
+          {
+            "name": "time_sync",
+            "type": "isaac::alice::TimeSynchronizer"
+          }
+        ]
+      },
+      {
+        "name": "station_3",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "output",
+            "type": "isaac::alice::TcpPublisher"
+          },
+          {
+            "name": "input",
+            "type": "isaac::alice::TcpSubscriber"
+          },
+          {
+            "name": "time_sync",
+            "type": "isaac::alice::TimeSynchronizer"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "interface/output/bodies",
+        "target": "transporter_0/output/bodies"
+      },
+      {
+        "source": "interface/output/bodies",
+        "target": "transporter_1/output/bodies"
+      },
+      {
+        "source": "interface/output/bodies",
+        "target": "transporter_2/output/bodies"
+      },
+      {
+        "source": "interface/output/bodies",
+        "target": "station_0/output/bodies"
+      },
+      {
+        "source": "interface/output/bodies",
+        "target": "station_1/output/bodies"
+      },
+      {
+        "source": "interface/output/bodies",
+        "target": "station_2/output/bodies"
+      },
+      {
+        "source": "interface/output/bodies",
+        "target": "station_3/output/bodies"
+      }
+    ]
+  },
+  "config": {
+    "interface": {
+      "output": {
+        "port": 44998
+      },
+      "input": {
+        "port": 44999,
+        "host": "localhost"
+      }
+    },
+    "transporter_0": {
+      "output": {
+        "port": 45000
+      },
+      "input": {
+        "port": 45001,
+        "host": "localhost"
+      }
+    },
+    "transporter_1": {
+      "output": {
+        "port": 45002
+      },
+      "input": {
+        "port": 45003,
+        "host": "localhost"
+      }
+    },
+    "transporter_2": {
+      "output": {
+        "port": 45004
+      },
+      "input": {
+        "port": 45005,
+        "host": "localhost"
+      }
+    },
+    "station_0": {
+      "output": {
+        "port": 46000
+      },
+      "input": {
+        "port": 46001,
+        "host": "localhost"
+      }
+    },
+    "station_1": {
+      "output": {
+        "port": 46002
+      },
+      "input": {
+        "port": 46003,
+        "host": "localhost"
+      }
+    },
+    "station_2": {
+      "output": {
+        "port": 46004
+      },
+      "input": {
+        "port": 46005,
+        "host": "localhost"
+      }
+    },
+    "station_3": {
+      "output": {
+        "port": 46006
+      },
+      "input": {
+        "port": 46007,
+        "host": "localhost"
+      }
+    }
+  }
+}

@@ -1,0 +1,524 @@
+{
+  "modules": [
+    "message_generators",
+    "//packages/egm_fusion:evidence_grid_map"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "subgraph",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "interface",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_to_evidence_map",
+        "components": [
+          {
+            "name": "isaac.egm_fusion.RangeScanToEvidenceMap",
+            "type": "isaac::egm_fusion::RangeScanToEvidenceMap"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_2_to_evidence_map",
+        "components": [
+          {
+            "name": "isaac.egm_fusion.RangeScanToEvidenceMap",
+            "type": "isaac::egm_fusion::RangeScanToEvidenceMap"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_3_to_evidence_map",
+        "components": [
+          {
+            "name": "isaac.egm_fusion.RangeScanToEvidenceMap",
+            "type": "isaac::egm_fusion::RangeScanToEvidenceMap"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_4_to_evidence_map",
+        "components": [
+          {
+            "name": "isaac.egm_fusion.RangeScanToEvidenceMap",
+            "type": "isaac::egm_fusion::RangeScanToEvidenceMap"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "evidence_local_map",
+        "components": [
+          {
+            "name": "isaac.egm_fusion.EvidenceMapFusion",
+            "type": "isaac::egm_fusion::EvidenceMapFusion"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "evidence_map_postprocessing",
+        "components": [
+          {
+            "name": "isaac.egm_fusion.EvidenceMapInpaint",
+            "type": "isaac::egm_fusion::EvidenceMapInpaint"
+          },
+          {
+            "name": "isaac.egm_fusion.EvidenceToBinaryMap",
+            "type": "isaac::egm_fusion::EvidenceToBinaryMap"
+          },
+          {
+            "name": "isaac.navigation.BinaryToDistanceMap",
+            "type": "isaac::navigation::BinaryToDistanceMap"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_lattice_1",
+        "components": [
+          {
+            "name": "isaac.message_generators.LatticeGenerator",
+            "type": "isaac::message_generators::LatticeGenerator"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_lattice_2",
+        "components": [
+          {
+            "name": "isaac.message_generators.LatticeGenerator",
+            "type": "isaac::message_generators::LatticeGenerator"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_lattice_3",
+        "components": [
+          {
+            "name": "isaac.message_generators.LatticeGenerator",
+            "type": "isaac::message_generators::LatticeGenerator"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_lattice_4",
+        "components": [
+          {
+            "name": "isaac.message_generators.LatticeGenerator",
+            "type": "isaac::message_generators::LatticeGenerator"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "local_map_lattice",
+        "components": [
+          {
+            "name": "isaac.message_generators.LatticeGenerator",
+            "type": "isaac::message_generators::LatticeGenerator"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "fused_map_lattice",
+        "components": [
+          {
+            "name": "isaac.message_generators.LatticeGenerator",
+            "type": "isaac::message_generators::LatticeGenerator"
+          },
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "binary_map_viewer",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "BinaryMapViewer",
+            "type": "isaac::viewers::BinaryMapViewer"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_1_viewer",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "EvidenceGridMapViewer",
+            "type": "isaac::egm_fusion::EvidenceGridMapViewer"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_2_viewer",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "EvidenceGridMapViewer",
+            "type": "isaac::egm_fusion::EvidenceGridMapViewer"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_3_viewer",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "EvidenceGridMapViewer",
+            "type": "isaac::egm_fusion::EvidenceGridMapViewer"
+          }
+        ]
+      },
+      {
+        "name": "range_scan_4_viewer",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "EvidenceGridMapViewer",
+            "type": "isaac::egm_fusion::EvidenceGridMapViewer"
+          }
+        ]
+      },
+      {
+        "name": "fused_egm_viewer",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "EvidenceGridMapViewer",
+            "type": "isaac::egm_fusion::EvidenceGridMapViewer"
+          }
+        ]
+      },
+      {
+        "name": "inpainted_egm_viewer",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "EvidenceGridMapViewer",
+            "type": "isaac::egm_fusion::EvidenceGridMapViewer"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "subgraph/interface/flatscan",
+        "target": "range_scan_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/flatscan"
+      },
+      {
+        "source": "subgraph/interface/flatscan_2",
+        "target": "range_scan_2_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/flatscan"
+      },
+      {
+        "source": "subgraph/interface/flatscan_3",
+        "target": "range_scan_3_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/flatscan"
+      },
+      {
+        "source": "subgraph/interface/flatscan_4",
+        "target": "range_scan_4_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/flatscan"
+      },
+      {
+        "source": "range_scan_lattice_1/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "range_scan_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map_lattice"
+      },
+      {
+        "source": "range_scan_lattice_2/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "range_scan_2_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map_lattice"
+      },
+      {
+        "source": "range_scan_lattice_3/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "range_scan_3_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map_lattice"
+      },
+      {
+        "source": "range_scan_lattice_4/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "range_scan_4_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map_lattice"
+      },
+      {
+        "source": "range_scan_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map",
+        "target": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/sensor_1"
+      },
+      {
+        "source": "range_scan_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map",
+        "target": "range_scan_1_viewer/EvidenceGridMapViewer/egm"
+      },
+      {
+        "source": "range_scan_lattice_1/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "range_scan_1_viewer/EvidenceGridMapViewer/egm_lattice"
+      },
+      {
+        "source": "range_scan_2_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map",
+        "target": "range_scan_2_viewer/EvidenceGridMapViewer/egm"
+      },
+      {
+        "source": "range_scan_lattice_2/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "range_scan_2_viewer/EvidenceGridMapViewer/egm_lattice"
+      },
+      {
+        "source": "range_scan_3_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map",
+        "target": "range_scan_3_viewer/EvidenceGridMapViewer/egm"
+      },
+      {
+        "source": "range_scan_lattice_3/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "range_scan_3_viewer/EvidenceGridMapViewer/egm_lattice"
+      },
+      {
+        "source": "range_scan_4_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map",
+        "target": "range_scan_4_viewer/EvidenceGridMapViewer/egm"
+      },
+      {
+        "source": "range_scan_lattice_4/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "range_scan_4_viewer/EvidenceGridMapViewer/egm_lattice"
+      },
+      {
+        "source": "range_scan_2_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map",
+        "target": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/sensor_2"
+      },
+      {
+        "source": "range_scan_3_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map",
+        "target": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/sensor_3"
+      },
+      {
+        "source": "range_scan_4_to_evidence_map/isaac.egm_fusion.RangeScanToEvidenceMap/evidence_map",
+        "target": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/sensor_4"
+      },
+      {
+        "source": "range_scan_lattice_1/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/lattice_1"
+      },
+      {
+        "source": "range_scan_lattice_2/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/lattice_2"
+      },
+      {
+        "source": "range_scan_lattice_3/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/lattice_3"
+      },
+      {
+        "source": "range_scan_lattice_4/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/lattice_4"
+      },
+      {
+        "source": "local_map_lattice/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/local_map_lattice"
+      },
+      {
+        "source": "fused_map_lattice/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/fused_map_lattice"
+      },
+      {
+        "source": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/evidential_local_map",
+        "target": "evidence_map_postprocessing/isaac.egm_fusion.EvidenceMapInpaint/original_egm"
+      },
+      {
+        "source": "evidence_local_map/isaac.egm_fusion.EvidenceMapFusion/evidential_local_map",
+        "target": "fused_egm_viewer/EvidenceGridMapViewer/egm"
+      },
+      {
+        "source": "local_map_lattice/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "fused_egm_viewer/EvidenceGridMapViewer/egm_lattice"
+      },
+      {
+        "source": "local_map_lattice/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "evidence_map_postprocessing/isaac.egm_fusion.EvidenceMapInpaint/egm_lattice"
+      },
+      {
+        "source": "evidence_map_postprocessing/isaac.egm_fusion.EvidenceMapInpaint/painted_egm",
+        "target": "inpainted_egm_viewer/EvidenceGridMapViewer/egm"
+      },
+      {
+        "source": "local_map_lattice/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "inpainted_egm_viewer/EvidenceGridMapViewer/egm_lattice"
+      },
+      {
+        "source": "evidence_map_postprocessing/isaac.egm_fusion.EvidenceMapInpaint/painted_egm",
+        "target": "evidence_map_postprocessing/isaac.egm_fusion.EvidenceToBinaryMap/evidence_grid"
+      },
+      {
+        "source": "evidence_map_postprocessing/isaac.egm_fusion.EvidenceToBinaryMap/binary_map",
+        "target": "binary_map_viewer/BinaryMapViewer/binary_map"
+      },
+      {
+        "source": "local_map_lattice/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "binary_map_viewer/BinaryMapViewer/binary_map_lattice"
+      },
+      {
+        "source": "evidence_map_postprocessing/isaac.egm_fusion.EvidenceToBinaryMap/binary_map",
+        "target": "evidence_map_postprocessing/isaac.navigation.BinaryToDistanceMap/binary_map"
+      },
+      {
+        "source": "local_map_lattice/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "evidence_map_postprocessing/isaac.navigation.BinaryToDistanceMap/binary_map_lattice"
+      },
+      {
+        "source": "evidence_map_postprocessing/isaac.egm_fusion.EvidenceMapInpaint/painted_egm",
+        "target": "subgraph/interface/local_map"
+      },
+      {
+        "source": "local_map_lattice/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "subgraph/interface/local_map_lattice"
+      }
+    ]
+  },
+  "config": {
+    "evidence_local_map": {
+      "isaac.egm_fusion.EvidenceMapFusion": {
+        "num_observation_channels": 4,
+        "tick_period":"100Hz"
+      }
+    },
+    "range_scan_2_to_evidence_map": {
+      "isaac.egm_fusion.RangeScanToEvidenceMap": {
+        "sensor_frame": "lidar_2"
+      }
+    },
+    "range_scan_3_to_evidence_map": {
+      "isaac.egm_fusion.RangeScanToEvidenceMap": {
+        "sensor_frame": "lidar_3"
+      }
+    },
+    "range_scan_4_to_evidence_map": {
+      "isaac.egm_fusion.RangeScanToEvidenceMap": {
+        "sensor_frame": "lidar_4"
+      }
+    },
+    "range_scan_lattice_1": {
+      "isaac.message_generators.LatticeGenerator": {
+        "relative_offset": [-0.25, -0.5],
+        "dimensions": [256, 256],
+        "lattice_frame_name": "lidar_lattice",
+        "reference_frame_name": "lidar",
+        "tick_period": "100Hz"
+      }
+    },
+    "range_scan_lattice_2": {
+      "isaac.message_generators.LatticeGenerator": {
+        "relative_offset": [-0.25, -0.5],
+        "dimensions": [256, 256],
+        "lattice_frame_name": "lidar_lattice_2",
+        "reference_frame_name": "lidar_2",
+        "tick_period": "100Hz"
+      }
+    },
+    "range_scan_lattice_3": {
+      "isaac.message_generators.LatticeGenerator": {
+        "relative_offset": [-0.25, -0.5],
+        "dimensions": [256, 256],
+        "lattice_frame_name": "lidar_lattice_3",
+        "reference_frame_name": "lidar_3",
+        "tick_period": "100Hz"
+      }
+    },
+    "range_scan_lattice_4": {
+      "isaac.message_generators.LatticeGenerator": {
+        "relative_offset": [-0.25, -0.5],
+        "dimensions": [256, 256],
+        "lattice_frame_name": "lidar_lattice_4",
+        "reference_frame_name": "lidar_4",
+        "tick_period": "100Hz"
+      }
+    },
+    "local_map_lattice": {
+      "isaac.message_generators.LatticeGenerator": {
+        "relative_offset": [-0.25, -0.5],
+        "lattice_frame_name": "evidence_map",
+        "reference_frame_name": "robot",
+        "tick_period": "100Hz"
+      }
+    },
+    "fused_map_lattice": {
+      "isaac.message_generators.LatticeGenerator": {
+        "relative_offset": [-0.5, -0.5],
+        "dimensions": [463, 463],
+        "lattice_frame_name": "fused_map",
+        "reference_frame_name": "robot",
+        "tick_period": "100Hz"
+      }
+    },
+    "evidence_map_postprocessing": {
+      "isaac.egm_fusion.EvidenceMapInpaint": {
+        "rectangles": [[[-0.25, 0.25],[-0.25, 0.25]]],
+        "rectangles_frame": "robot"
+      },
+      "isaac.navigation.BinaryToDistanceMap": {
+        "obstacle_name": "local_map",
+        "compute_distance_inside": true,
+        "blur_factor": 3,
+        "max_distance": 1.0
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "image_channel": "color",
+  "gt_pose_channel": "gt_poses",
+  "pred_pose_channel": "predicted_poses",
+  "pred_detection_channel": "predicted_detections",
+
+  "symmetry_axis": 2,
+  "num_rotation_symmetry": 2,
+
+  "rotation_err_threshold": 10,
+  "translation_err_threshold": [0.08, 0.05, 0.15],
+  "depth_roi": [2.0, 3.5],
+
+  "box_plot_camera_distance_bins": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+  "translation_box_plot_y_limit": [0.1, 0.1, 0.2],
+  "rotation_box_plot_y_limit": 90,
+
+  "camera_focal": [925.74, 925.74],
+  "image_center": [640, 360],
+  "object_size": [0.9, 1.32, 0.25],
+  "object_center": [0.0, 0.0, 0.375],
+
+  "KPI_accuracy_threshold": 0.55
+}

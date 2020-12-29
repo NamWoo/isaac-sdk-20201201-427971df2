@@ -1,0 +1,185 @@
+// ISAAC SDK Release Pipeline
+//
+// Prepare release package and put it in storage on
+// isaac-sdk-build-01.nvidia.com
+//
+// Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
+//
+// NVIDIA CORPORATION and its licensors retain all intellectual property
+// and proprietary rights in and to this software, related documentation
+// and any modifications thereto. Any use, reproduction, disclosure or
+// distribution of this software and related documentation without an express
+// license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+pipeline {
+    agent none
+    environment {
+        GERRIT_SERVER="git-master.nvidia.com"
+        CREDENTIALS_ID="isaac-git-master"
+        ARCHIVE_SERVER="isaac-sdk-build-01.nvidia.com"
+        ARCHIVE_PATH="~/internal-archive"
+    }
+    parameters {
+        string(
+            name: 'REF',
+            description: "Required parameter in NGC",
+            defaultValue: 'master'
+        )
+    }
+    options {
+        ansiColor('xterm')
+        timestamps()
+        timeout(time: 3, unit: 'HOURS')
+    }
+    stages {
+        stage ("First Run") {
+            agent none
+            // NGCC recommends to abort the build on first run. This first run is used
+            // for Jenkins to pick up the parameters and create the required hooks for
+            // this pipeline
+            steps {
+                script {
+                    if (params.jenkins_init) {
+                        currentBuild.result = 'ABORTED'
+                        error("Initial dummy build for Jenkins configs")
+                    }
+                }
+            }
+        }
+
+        stage("Checkout and Build") {
+            agent {
+                node {
+                    label "docker"
+                }
+            }
+            stages {
+                stage("Checkout") {
+                    steps {
+                        //checkout scm
+                        git url: "ssh://${env.GERRIT_SERVER}:12001/robotics/isaac", credentialsId: env.CREDENTIALS_ID
+                    }
+                }
+
+                stage('Build') {
+                    agent {
+                        dockerfile {
+                            label 'docker'
+                            reuseNode true
+                            filename 'docker/Dockerfile'
+                            dir 'engine/build'
+                            args '-v /var/run/docker.sock:/var/run/docker.sock:rw \
+                            -v $WORKSPACE:/src/workspace \
+                            -v /etc/passwd:/etc/passwd \
+                            -e HOME=/src/workspace
+                            -e USER="$(id -u)" \
+                            -e LOGNAME="$(id -u)" '
+                        }
+                    }
+                    steps {
+                        dir(WORKSPACE) {
+                            sh 'bazel --output_user_root=/tmp/isaac_release/build_output build ...'
+                        }
+                        stash includes: '*',  name:"full-workspace"
+                    }
+                }
+
+                stage('Archive') {
+                    steps {
+                        unstash 'full-workspace'
+                        stash includes: 'release/*', name: 'release-workspace'
+                        withCredentials([
+                            sshUserPrivateKey(
+                                credentialsId: env.CREDENTIALS_ID,
+                                keyFileVariable: 'SSH_CREDENTIALS_FILE',
+                                usernameVariable: 'SSH_CREDENTIALS_USER'
+                            )
+                        ]) {
+                            script {
+                                env.ARCHIVE_FILENAME = sh (returnStdout: true,
+                                    script: "echo isaac-release-candidate-`date +%Y%m%d`-out.tar.gz"
+                                ).trim()
+                            }
+                            sh """
+                                ssh-keyscan -H ${env.ARCHIVE_SERVER} >> ${env.WORKSPACE}/.known_hosts
+                                tar --exclude='.git' --exclude='.known_hosts' --exclude="bazel-*" --exclude="${env.ARCHIVE_FILENAME}" -zcvf /tmp/${env.ARCHIVE_FILENAME} .
+                                echo "Copying /tmp/${env.ARCHIVE_FILENAME} to ${env.ARCHIVE_SERVER}:${env.ARCHIVE_PATH}"
+                                scp -F /dev/null -o UserKnownHostsFile='.known_hosts' -i ${SSH_CREDENTIALS_FILE} \
+                                    /tmp/${env.ARCHIVE_FILENAME} \
+                                    ${SSH_CREDENTIALS_USER}@${env.ARCHIVE_SERVER}:${env.ARCHIVE_PATH}
+                            """
+                        }
+                    }
+                }
+
+                stage('Build release workspace') {
+                    agent {
+                        dockerfile {
+                            label 'docker'
+                            reuseNode true
+                            filename 'docker/Dockerfile'
+                            dir 'engine/build'
+                            args '-v /var/run/docker.sock:/var/run/docker.sock:rw \
+                            -v $WORKSPACE:/src/workspace \
+                            -e USER="$(id -u)" \
+                            -e LOGNAME="$(id -u)" \
+                            -v /etc/passwd:/etc/passwd \
+                            -v /tmp:/tmp'
+                        }
+                    }
+                    steps{
+                        unstage 'release-workspace'
+                        sh 'bazel --output_user_root=/tmp/release/build_output build ...'
+                    }
+                }
+
+            }
+            post {
+                always {
+                    cleanWs()
+                    slackSend color: 'good', message: "Build finished ${env.JOB_NAME} - ${env.BUILD_NUMBER}", channel: '#isaac-ci-dev'
+                }
+            }
+        }
+    }
+    post {
+        failure {
+            emailext (
+                subject: "[CI-CD][ISAAC]: Failed release build '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                mimeType: 'text/html',
+                body: """
+                <html>
+                    <body>
+                        <p>Failed '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+                        <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>
+                    </body>
+                </html>
+                """,
+                //recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+                to: 'hguillen@nvidia.com',
+                attachLog: true
+            )
+        }
+        success {
+            emailext (
+                subject: "[CI-CD][ISAAC]:Release Candidate build available '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                mimeType: 'text/html',
+                body: """
+                <html>
+                    <body>
+                        <p>Successfully built '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+                        <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>
+                        <p>
+                            Get the archive by executing the following command <br>
+                            <pre>scp isaac-sdk-build-01:/mnt/stg-devdownload/${env.ARCHIVE_FILENAME} .</pre>
+                        </p>
+                    </body>
+                </html>
+                """,
+                //recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+                to: 'hguillen@nvidia.com',
+                attachLog: true
+            )
+        }
+    }
+}

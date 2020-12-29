@@ -1,0 +1,9 @@
+{
+  "config": {
+    "flatsim.navigation.planner.planner_switch_behavior": {
+      "SwitchBehavior": {
+        "desired_behavior": "$(fullname flatsim.navigation.planner.pose2_graph_planner)"
+      }
+    }
+  }
+}

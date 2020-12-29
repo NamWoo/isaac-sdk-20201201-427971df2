@@ -1,0 +1,7 @@
+# OpenPose Notice
+
+OpenPose is an optional part of NVIDIA Isaac SDK. The NVIDIA Isaac SDK application binaries may
+compile in code from OpenPose IF you have included and used its respective build files and
+sources.
+
+OpenPose software is under Apache Version 2.0 license.

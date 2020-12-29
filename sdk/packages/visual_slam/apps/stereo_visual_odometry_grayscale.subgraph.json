@@ -1,0 +1,224 @@
+{
+  "modules": [
+    "behavior_tree",
+    "sight",
+    "visual_slam",
+    "viewers",
+    "utils"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "subgraph",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "interface",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "tracking_behavior",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "ParallelBehavior",
+            "type": "isaac::behavior_tree::ParallelBehavior"
+          }
+        ]
+      },
+      {
+        "name": "image_keypoint_viewer",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ImageKeypointViewer",
+            "type": "isaac::viewers::ImageKeypointViewer"
+          }
+        ]
+      },
+      {
+        "name": "landmarks_viewer",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "LandmarksViewer",
+            "type": "isaac::LandmarksViewer"
+          }
+        ]
+      },
+      {
+        "name": "image_viewer",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ImageViewer",
+            "type": "isaac::viewers::ImageViewer"
+          }
+        ]
+      },
+      {
+        "name": "tracker",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "StereoVisualOdometry",
+            "type": "isaac::StereoVisualOdometry"
+          }
+        ]
+      },
+      {
+        "name": "sight_widgets",
+        "components": [
+          {
+            "type": "isaac::sight::SightWidget",
+            "name": "Camera Pose"
+          },
+          {
+            "type": "isaac::sight::SightWidget",
+            "name": "2D Features"
+          },
+          {
+            "type": "isaac::sight::SightWidget",
+            "name": "xy"
+          },
+          {
+            "type": "isaac::sight::SightWidget",
+            "name": "up"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "subgraph/interface/left_image",
+        "target": "tracker/StereoVisualOdometry/left_image"
+      },
+      {
+        "source": "subgraph/interface/left_image",
+        "target": "image_viewer/ImageViewer/image"
+      },
+      {
+        "source": "subgraph/interface/right_image",
+        "target": "tracker/StereoVisualOdometry/right_image"
+      },
+      {
+        "source": "subgraph/interface/left_intrinsics",
+        "target": "tracker/StereoVisualOdometry/left_intrinsics"
+      },
+      {
+        "source": "subgraph/interface/left_intrinsics",
+        "target": "image_viewer/ImageViewer/intrinsics"
+      },
+      {
+        "source": "subgraph/interface/right_intrinsics",
+        "target": "tracker/StereoVisualOdometry/right_intrinsics"
+      },
+      {
+        "source": "subgraph/interface/imu",
+        "target": "tracker/StereoVisualOdometry/imu"
+      },
+      {
+        "source": "tracker/StereoVisualOdometry/coordinates",
+        "target": "image_keypoint_viewer/ImageKeypointViewer/coordinates"
+      },
+      {
+        "source": "tracker/StereoVisualOdometry/features",
+        "target": "image_keypoint_viewer/ImageKeypointViewer/features"
+      },
+      {
+        "source": "tracker/StereoVisualOdometry/landmark_coordinates",
+        "target": "landmarks_viewer/LandmarksViewer/coordinates"
+      },
+      {
+        "source": "tracker/StereoVisualOdometry/landmark_ids",
+        "target": "landmarks_viewer/LandmarksViewer/ids"
+      }
+    ]
+  },
+  "config": {
+    "image_viewer": {
+      "ImageViewer": {
+        "target_fps": 100
+      }
+    },
+    "sight_widgets": {
+      "Camera Pose": {
+        "type": "3d",
+        "dimensions": [450, 1100],
+        "channels": [
+          {
+            "name": "$(fullname tracker/StereoVisualOdometry/current_pose)"
+          },
+          {
+            "name": "$(fullname tracker/StereoVisualOdometry/pose_trail)"
+          },
+          {
+            "name": "$(fullname landmarks_viewer/LandmarksViewer/landmarks)"
+          }
+        ]
+      },
+      "2D Features": {
+        "type": "2d",
+        "channels": [
+          {
+            "name": "$(fullname image_viewer/ImageViewer/image)"
+          },
+          {
+            "name": "$(fullname image_keypoint_viewer/ImageKeypointViewer/keypoints)"
+          }
+        ]
+      },
+      "xy": {
+        "type": "plot",
+        "channels": [
+          {
+            "name": "$(fullname tracker/StereoVisualOdometry/vo.pos_x)"
+          },
+          {
+            "name": "$(fullname tracker/StereoVisualOdometry/vo.pos_y)"
+          }
+        ]
+      },
+      "up": {
+        "type": "plot",
+        "channels": [
+          {
+            "name": "$(fullname tracker/StereoVisualOdometry/vo.pos_z)"
+          }
+        ]
+      }
+    },
+    "tracking_behavior": {
+      "NodeGroup": {
+        "node_names": [
+          "$(fullname tracker)"
+        ]
+      }
+    },
+    "tracker": {
+      "StereoVisualOdometry": {
+        "horizontal_stereo_camera": true
+      }
+    }
+  }
+}

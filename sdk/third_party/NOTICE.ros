@@ -1,0 +1,5 @@
+# ROS Notice
+
+ROS core is an optional part of NVIDIA Isaac SDK. The NVIDIA Isaac SDK application binaries may
+compile in code from the ROS core IF you have included and used the `ros.bzl` and `ros*.BUILD`
+files. Only the core modules of ROS are used. These modules are under BSD-3 licensing.

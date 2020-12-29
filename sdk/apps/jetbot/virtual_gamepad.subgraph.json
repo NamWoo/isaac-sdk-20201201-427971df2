@@ -1,0 +1,57 @@
+{
+  "modules": [
+    "navigation",
+    "sight"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "subgraph",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "interface",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "virtual_gamepad_bridge",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "VirtualGamepadBridge",
+            "type": "isaac::navigation::VirtualGamepadBridge"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "/websight/WebsightServer/virtual_gamepad",
+        "target": "virtual_gamepad_bridge/VirtualGamepadBridge/request"
+      },
+      {
+        "source": "virtual_gamepad_bridge/VirtualGamepadBridge/reply",
+        "target": "/websight/WebsightServer/virtual_gamepad_reply"
+      },
+      {
+        "source": "virtual_gamepad_bridge/VirtualGamepadBridge/joystick",
+        "target": "subgraph/interface/joystick"
+      }
+    ]
+  },
+  "config": {
+    "virtual_gamepad_bridge": {
+      "VirtualGamepadBridge": {
+        "tick_period": "100ms"
+      }
+    }
+  }
+}

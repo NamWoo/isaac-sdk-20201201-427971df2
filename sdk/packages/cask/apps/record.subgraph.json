@@ -1,0 +1,58 @@
+{
+  "modules": [
+    "cask",
+    "sight"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "subgraph",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Subgraph",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "input",
+            "type": "isaac::cask::Recorder"
+          }
+        ]
+      },
+      {
+        "name": "record_bridge",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "RecorderBridge",
+            "type": "isaac::cask::RecorderBridge"
+          }
+        ]
+      }
+    ],
+    "edges": []
+  },
+  "config": {
+    "record_bridge": {
+      "RecorderBridge": {
+        "recorder_component_name": "$(fullname interface/input)",
+        "tick_period": "1.0"
+      }
+    }
+  }
+}

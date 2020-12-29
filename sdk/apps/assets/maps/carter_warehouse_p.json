@@ -1,0 +1,54 @@
+{
+  "modules": [
+    "map",
+    "navigation"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "map",
+        "start_order": -100,
+        "components": [
+          {
+            "name": "isaac.map.Map",
+            "type": "isaac::map::Map"
+          },
+          {
+            "name": "map",
+            "type": "isaac::navigation::NavigationMap"
+          },
+          {
+            "name": "occupancy",
+            "type": "isaac::map::OccupancyGridMapLayer"
+          },
+          {
+            "name": "waypoints",
+            "type": "isaac::map::WaypointMapLayer"
+          },
+          {
+            "name": "restricted_area",
+            "type": "isaac::map::PolygonMapLayer"
+          }
+        ]
+      }
+    ],
+    "edges": []
+  },
+  "config": {
+    "map": {
+      "occupancy": {
+        "cell_size": 0.1,
+        "filename": "apps/assets/maps/carter_warehouse_p.png"
+      },
+      "waypoints": {
+        "vis_cell_size": 0.1,
+        "waypoints": {},
+        "tick_period": "1.0"
+      },
+      "restricted_area": {
+        "polygons": {},
+        "tick_period": "1.0"
+      }
+    }
+  }
+}

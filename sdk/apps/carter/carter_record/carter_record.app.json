@@ -1,0 +1,137 @@
+{
+  "name": "carter_record",
+  "modules": [
+    "viewers",
+    "zed",
+    "sight"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "2d_carter",
+        "subgraph": "apps/carter/2d_carter.subgraph.json"
+      },
+      {
+        "name": "commander",
+        "subgraph": "packages/navigation/apps/differential_base_commander.subgraph.json"
+      },
+      {
+        "name": "record",
+        "subgraph": "packages/cask/apps/record.subgraph.json"
+      },
+      {
+        "name": "camera",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ZedCamera",
+            "type": "isaac::ZedCamera"
+          }
+        ]
+      },
+      {
+        "name": "viewers",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "left_rgb",
+            "type": "isaac::viewers::ImageViewer"
+          },
+          {
+            "name": "right_rgb",
+            "type": "isaac::viewers::ImageViewer"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "commander.subgraph/interface/command",
+        "target": "2d_carter.subgraph/interface/diff_base_command"
+      },
+      {
+        "source": "camera/ZedCamera/left_camera_rgb",
+        "target": "viewers/left_rgb/image"
+      },
+      {
+        "source": "camera/ZedCamera/right_camera_rgb",
+        "target": "viewers/right_rgb/image"
+      },
+      {
+        "source": "2d_carter.subgraph/interface/diff_base_state",
+        "target": "record.interface/input/segway_state"
+      },
+      {
+        "source": "2d_carter.carter_hardware.subgraph/interface/scan",
+        "target": "record.interface/input/fullscan"
+      },
+      {
+        "source": "2d_carter.subgraph/interface/diff_base_state",
+        "target": "record.interface/input/state"
+      },
+      {
+        "source": "2d_carter.subgraph/interface/imu_raw",
+        "target": "record.interface/input/imu_raw"
+      },
+      {
+        "source": "camera/ZedCamera/left_camera_rgb",
+        "target": "record.interface/input/left_rgb_thumbnail"
+      },
+      {
+        "source": "camera/ZedCamera/right_camera_rgb",
+        "target": "record.interface/input/right_rgb_thumbnail"
+      }
+    ]
+  },
+  "config": {
+    "camera": {
+      "ZedCamera": {
+        "tick_period": "60Hz",
+        "resolution": "1280x720",
+        "camera_fps": 15,
+        "enable_imu": false
+      },
+      "zed_imu_reader": {
+        "tick_period": "100Hz"
+      }
+    },
+    "websight": {
+      "WebsightServer": {
+        "port": 3000,
+        "ui_config": {
+          "windows": {
+            "Right Camera": {
+              "renderer": "2d",
+              "channels": [
+                {
+                  "name": "carter_record/viewers/right_rgb/image"
+                }
+              ]
+            },
+            "Left Camera": {
+              "renderer": "2d",
+              "channels": [
+                {
+                  "name": "carter_record/viewers/left_rgb/image"
+                }
+              ]
+            }
+          },
+          "assets": {}
+        }
+      }
+    },
+    "record.interface": {
+      "input": {
+        "start_recording_automatically": false,
+        "base_directory": "/tmp/cask"
+      }
+    }
+  }
+}

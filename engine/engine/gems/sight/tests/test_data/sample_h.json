@@ -1,0 +1,11 @@
+{
+  "0_element": {
+    "type": "cube",
+    "color": [255, 0, 0],
+    "size": 5.0
+  },
+  "element_1": {
+    "type": "circle",
+    "color": [255, 255, 255]
+  }
+}

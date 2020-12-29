@@ -1,0 +1,101 @@
+// ISAAC SDK Scheduler pipeline
+//
+// Periodically queries Gerrit to discover new changelists and schedules
+// a new build for it.
+//
+// Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
+//
+// NVIDIA CORPORATION and its licensors retain all intellectual property
+// and proprietary rights in and to this software, related documentation
+// and any modifications thereto. Any use, reproduction, disclosure or
+// distribution of this software and related documentation without an express
+// license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+pipeline {
+    agent {
+        node {
+            label 'isaac'
+        }
+    }
+    environment {
+        GERRIT_SERVER="git-master.nvidia.com"
+        CREDENTIALS_ID="isaac-git-master"
+        DOCKER_ARGUMENTS='-e HOME=/tmp -v /etc/passwd:/etc/passwd:ro'
+    }
+    parameters {
+        string(
+            name: 'REF',
+            description: "Required parameter in NGC",
+            defaultValue: 'master'
+        )
+    }
+    options {
+        ansiColor('xterm')
+        timestamps()
+        timeout(time: 1, unit: 'HOURS')
+    }
+    triggers {
+        cron('H/30 * * * *')
+    }
+    stages {
+        stage("Get Gerrit info") {
+            steps {
+                sh 'echo \'FROM ubuntu:16.04\nRUN apt-get update\nRUN apt-get install ssh jq -y\'\
+                 | docker build -t isaac-ci-scheduler -'
+                script {
+                    def isaac_ci_scheduler = docker.image('isaac-ci-scheduler')
+                    isaac_ci_scheduler.inside(DOCKER_ARGUMENTS) {
+                        dir(WORKSPACE) {
+                            withCredentials([
+                                sshUserPrivateKey(
+                                    credentialsId: env.CREDENTIALS_ID,
+                                    keyFileVariable: 'SSH_CREDENTIALS_FILE',
+                                    usernameVariable: 'SSH_CREDENTIALS_USER'
+                                )
+                            ]) {
+                                script {
+                                    def max_age = ( currentBuild.startTimeInMillis - currentBuild.getPreviousBuild().startTimeInMillis ) / 1000
+                                    pending_cl_info = sh (returnStdout: true,
+                                        script: "ssh -i '$SSH_CREDENTIALS_FILE' \
+                                        -o StrictHostKeyChecking=no \
+                                        -o UserKnownHostsFile=/dev/null \
+                                        -p 29418 ${SSH_CREDENTIALS_USER}@${env.GERRIT_SERVER} \
+                                        gerrit query \
+                                            --current-patch-set --format=json \
+                                            -- \
+                                            project:robotics/isaac\
+                                            status:open \
+                                            \\( label:CI-Verified=0,self OR label:CI-Verified=-2,self\\)\
+                                            label:Code-Review=0,self\
+                                            -age:${max_age.setScale(0, BigDecimal.ROUND_HALF_UP)}s \
+                                            | jq -s '[ .[] | select(has(\"number\")) \
+                                            | select (.subject | startswith(\"[WIP]\") | not) \
+                                            | { number: .number,\
+                                                patchSet: .currentPatchSet.number,\
+                                                ref: .currentPatchSet.ref,\
+                                                author: .currentPatchSet.author\
+                                            } ]'"
+                                    ).trim()
+                                    def cl_list = readJSON text: pending_cl_info
+                                    for (int i = 0; i < cl_list.size(); i++) {
+                                        print "About to schedule a job with id: ${cl_list[i].number} and patchset: ${cl_list[i].patchSet}"
+                                        build job: 'development', wait: false, parameters: [
+                                            string(name: 'GERRIT_CHANGE_NUMBER', value: "${cl_list[i].number}"),
+                                            string(name: 'GERRIT_PATCHSET_NUMBER', value: "${cl_list[i].patchSet}"),
+                                            string(name: 'REF', value: cl_list[i].ref)
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}

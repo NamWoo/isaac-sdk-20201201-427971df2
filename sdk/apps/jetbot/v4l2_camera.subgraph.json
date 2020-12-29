@@ -1,0 +1,80 @@
+{
+    "modules": [
+      "sensors:v4l2_camera",
+      "viewers"
+    ],
+    "graph": {
+      "nodes": [
+        {
+          "name": "subgraph",
+          "components": [
+            {
+              "name": "message_ledger",
+              "type": "isaac::alice::MessageLedger"
+            },
+            {
+              "name": "interface",
+              "type": "isaac::alice::Subgraph"
+            }
+          ]
+        },
+        {
+          "name": "camera",
+          "components": [
+            {
+              "name": "MessageLedger",
+              "type": "isaac::alice::MessageLedger"
+            },
+            {
+              "name": "V4L2Camera",
+              "type": "isaac::V4L2Camera"
+            }
+          ]
+        },
+        {
+          "name": "viewer",
+          "components": [
+            {
+              "name": "MessageLedger",
+              "type": "isaac::alice::MessageLedger"
+            },
+            {
+              "name": "ImageViewer",
+              "type": "isaac::viewers::ImageViewer"
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "source": "camera/V4L2Camera/frame",
+          "target": "viewer/ImageViewer/image"
+        }
+      ]
+    },
+    "config": {
+      "camera": {
+        "V4L2Camera": {
+          "device_id": 0,
+          "rows": 360,
+          "cols": 640,
+          "rate_hz": 30
+        }
+      },
+      "websight": {
+        "WebsightServer": {
+          "port": 3000,
+          "ui_config": {
+            "windows": {
+              "Camera": {
+                "renderer": "2d",
+                "channels": [
+                  { "name": "v4l2_camera/viewer/ImageViewer/image" }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }

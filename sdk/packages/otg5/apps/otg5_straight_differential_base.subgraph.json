@@ -1,0 +1,178 @@
+{
+  "modules": [
+    "behavior_tree",
+    "otg5"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "subgraph",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "interface",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "otg5_straight_behavior",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "ParallelBehavior",
+            "type": "isaac::behavior_tree::ParallelBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "goal_to_delta",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "GoalToDelta",
+            "type": "isaac::otg5::GoalToDelta"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "rotate_translate_rotate_state_machine",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "RotateTranslateRotateStateMachine",
+            "type": "isaac::otg5::RotateTranslateRotateStateMachine"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "obstacle_delta_limiter",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ObstacleDeltaLimiter",
+            "type": "isaac::otg5::ObstacleDeltaLimiter"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "dual_otg5",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "DualOtg5",
+            "type": "isaac::otg5::DualOtg5"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "trajectory_converter",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "CompositeToDifferentialTrajectoryConverter",
+            "type": "isaac::utils::CompositeToDifferentialTrajectoryConverter"
+          }
+        ],
+        "disable_automatic_start": true
+      }
+    ],
+    "edges": [
+      {
+        "source": "subgraph/interface/goal",
+        "target": "goal_to_delta/GoalToDelta/goal"
+      },
+      {
+        "source": "goal_to_delta/GoalToDelta/delta",
+        "target": "rotate_translate_rotate_state_machine/RotateTranslateRotateStateMachine/delta_in"
+      },
+      {
+        "source": "subgraph/interface/odometry",
+        "target": "rotate_translate_rotate_state_machine/RotateTranslateRotateStateMachine/odometry"
+      },
+      {
+        "source": "rotate_translate_rotate_state_machine/RotateTranslateRotateStateMachine/delta_out",
+        "target": "obstacle_delta_limiter/ObstacleDeltaLimiter/delta_in"
+      },
+      {
+        "source": "obstacle_delta_limiter/ObstacleDeltaLimiter/delta_out",
+        "target": "dual_otg5/DualOtg5/delta"
+      },
+      {
+        "source": "dual_otg5/DualOtg5/trajectory",
+        "target": "trajectory_converter/CompositeToDifferentialTrajectoryConverter/input_plan"
+      },
+      {
+        "source": "subgraph/interface/odometry",
+        "target": "dual_otg5/DualOtg5/odometry"
+      },
+      {
+        "source": "trajectory_converter/CompositeToDifferentialTrajectoryConverter/output_plan",
+        "target": "subgraph/interface/plan"
+      }
+    ]
+  },
+  "config": {
+    "otg5_straight_behavior": {
+      "NodeGroup": {
+        "node_names": [
+          "$(fullname goal_to_delta)",
+          "$(fullname rotate_translate_rotate_state_machine)",
+          "$(fullname obstacle_delta_limiter)",
+          "$(fullname dual_otg5)",
+          "$(fullname trajectory_converter)"
+        ]
+      }
+    },
+    "obstacle_delta_limiter": {
+      "ObstacleDeltaLimiter": {
+        "obstacle_names": [
+          "map/isaac.navigation.DistanceMap",
+          "map/restricted_area",
+          "local_map"
+        ]
+      }
+    },
+    "goal_to_delta": {
+      "GoalToDelta": {
+        "tick_period": "100Hz"
+      }
+    },
+    "dual_otg5": {
+      "DualOtg5": {
+        "tick_period": "10Hz"
+      }
+    },
+    "trajectory_converter": {
+      "CompositeToDifferentialTrajectoryConverter": {
+        "frame": "odom"
+      }
+    }
+  }
+}

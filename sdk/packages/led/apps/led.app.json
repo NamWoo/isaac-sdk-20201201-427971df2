@@ -1,0 +1,53 @@
+{
+  "name": "led_sample",
+  "modules": [
+    "//packages/led/apps:simple_led",
+    "led",
+    "sight"
+  ],
+  "config": {
+    "led": {
+      "simple_led": {
+        "tick_period": "1s"
+      },
+      "neopixels": {
+        "bus": 8
+      }
+    },
+    "websight": {
+      "WebsightServer": {
+        "port": 3000,
+        "ui_config": {
+          "windows": {}
+        }
+      }
+    }
+  },
+  "graph": {
+    "nodes": [
+      {
+        "name": "led",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "simple_led",
+            "type": "isaac::SimpleLed"
+          },
+          {
+            "name": "neopixels",
+            "type": "isaac::AdafruitNeoPixelLedStrip"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "led/simple_led/led_strip",
+        "target": "led/neopixels/led_strip"
+      }
+    ]
+  }
+}

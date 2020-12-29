@@ -1,0 +1,10 @@
+bazel*
+cscope.*
+*.swp
+*.sublime-project
+*.sublime-workspace
+*.pyc
+.vscode/*
+imgui.ini
+.dazel_run
+venv/

@@ -1,0 +1,49 @@
+{
+  "config": {
+    "detection_pose_estimation.object_detection.tensor_r_t_inference": {
+      "isaac.ml.TensorRTInference": {
+        "model_file_path": "external/industrial_dolly_pose_estimation_cnn_model/resnet18_detector_industrial_dolly_bldgK.etlt",
+        "etlt_password": "test_pilot_2020",
+        "force_engine_update": false
+      }
+    },
+    "detection_pose_estimation.object_detection.detection_decoder": {
+      "isaac.detect_net.DetectNetDecoder": {
+        "labels": ["dolly"],
+        "non_maximum_suppression_threshold": 0.3,
+        "confidence_threshold": 0.35,
+        "min_bbox_area": 10000
+      }
+    },
+    "detection_pose_estimation.object_pose_estimation.pose_encoder": {
+      "TensorRTInference": {
+        "model_file_path": "external/industrial_dolly_pose_estimation_cnn_model/pose_estimation_cnn_industrial_dolly_bldgK.uff",
+        "force_engine_update": false
+      }
+    },
+    "detection_pose_estimation.object_pose_estimation.pose_estimation": {
+      "PoseCnnDecoder": {
+        "training_camera_vertical_fov_deg": 42,
+        "training_image_dimensions": [720, 1280]
+      }
+    },
+    "detection_pose_estimation.viewers": {
+      "Detections3Viewer": {
+        "frame": "camera",
+        "object_T_box_center": [1.0, 0, 0, 0, 0, 0, 0.375],
+        "box_dimensions": [0.9, 1.32, 0.25],
+        "mesh_name": "dolly"
+      }
+    },
+    "detection_pose_estimation.object_pose_estimation.detection_filter": {
+      "FilterDetections": {
+        "allowlist_labels": [
+          "Dolly",
+          "dolly"
+        ]
+      },
+      "max_detections": 1,
+      "focus_factor": 0.5
+    }
+  }
+}

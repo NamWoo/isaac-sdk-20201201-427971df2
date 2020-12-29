@@ -1,0 +1,101 @@
+{
+  "config": {
+    "pose_initializer": {
+      "PoseInitializerCamera": {
+        "lhs_frame": "panda_hand",
+        "pose": [0.707, 0.0, 0.0, 0.707, 0.05, 0.0, 0.05147]
+      }
+    },
+    "pick_task.set_target_poses": {
+      "PoseInitializerGrasp": {
+        "pose": [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.05]
+      },
+      "PoseInitializerPreGrasp": {
+        "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.15]
+      },
+      "PoseInitializerLift": {
+        "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.15]
+      }
+    },
+    "pick_task.go_to_view_pose": {
+      "ConfigLoader": {
+        "config": {
+          "pick_task.joint_follow_path": {
+            "CompositePublisher": {
+              "path": ["home_pose"]
+            }
+          }
+        }
+      }
+    },
+    "pick_task.open_gripper_before_grasp": {
+      "ConfigLoader": {
+        "config": {
+          "pick_task.suction_follow_path": {
+            "CompositePublisher": {
+              "path": ["gripper_open"]
+            }
+          }
+        }
+      }
+    },
+    "pick_task.cartesian_planner": {
+      "EndEffectorGlobalPlanner": {
+        "end_effector_name": "panda_gripper",
+        "number_attempts": 0,
+        "ik_maximum_iterations": 2000
+      }
+    },
+    "pick_task.close_gripper_after_grasp": {
+      "ConfigLoader": {
+        "config": {
+          "pick_task.suction_follow_path": {
+            "CompositePublisher": {
+              "path": ["gripper_close"]
+            }
+          }
+        }
+      }
+    },
+    "place_task.go_to_approach_pose": {
+      "ConfigLoader": {
+        "config": {
+          "place_task.joint_follow_path": {
+            "CompositePublisher": {
+              "path": ["home_pose"]
+            }
+          }
+        }
+      }
+    },
+    "place_task.open_gripper_for_putdown": {
+      "ConfigLoader": {
+        "config": {
+          "place_task.suction_follow_path": {
+            "CompositePublisher": {
+              "path": ["gripper_open"]
+            }
+          }
+        }
+      }
+    },
+    "place_task.cartesian_planner": {
+      "EndEffectorGlobalPlanner": {
+        "end_effector_name": "panda_gripper",
+        "number_attempts": 0,
+        "ik_maximum_iterations": 2000
+      }
+    },
+    "place_task.set_target_poses": {
+      "PoseInitializerPutdownPose": {
+        "pose": [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.05]
+      },
+      "PoseInitializerPrePutdownPose": {
+        "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.15]
+      },
+      "PoseInitializerAfterPutdownPose": {
+        "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.15]
+      }
+    }
+  }
+}

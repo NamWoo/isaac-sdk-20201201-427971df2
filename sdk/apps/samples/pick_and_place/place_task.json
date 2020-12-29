@@ -1,0 +1,367 @@
+{
+  "modules": [
+    "behavior_tree",
+    "composite",
+    "path_planner",
+    "utils"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Subgraph",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "mission",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "place_object",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "relink_destination_pose",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "PyCodelet",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "set_target_poses",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "PoseInitializerPutdownPose",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "PoseInitializerPrePutdownPose",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "PoseInitializerAfterPutdownPose",
+            "type": "isaac::alice::PoseInitializer"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "joint_follow_path",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "CompositePublisher",
+            "type": "isaac::composite::CompositePublisher"
+          },
+          {
+            "name": "CompositeMetric",
+            "type": "isaac::composite::CompositeMetric"
+          },
+          {
+            "name": "FollowPath",
+            "type": "isaac::composite::FollowPath"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "go_to_approach_pose",
+        "components": [
+          {
+            "name": "ConfigLoader",
+            "type": "isaac::alice::ConfigLoader"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "cartesian_planner",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "EndEffectorGlobalPlanner",
+            "type": "isaac::path_planner::EndEffectorGlobalPlanner"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "suction_follow_path",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "CompositePublisher",
+            "type": "isaac::composite::CompositePublisher"
+          },
+          {
+            "name": "CompositeMetric",
+            "type": "isaac::composite::CompositeMetric"
+          },
+          {
+            "name": "FollowPath",
+            "type": "isaac::composite::FollowPath"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "go_to_preputdown_pose",
+        "components": [
+          {
+            "name": "ConfigLoader",
+            "type": "isaac::alice::ConfigLoader"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "go_to_putdown_pose",
+        "components": [
+          {
+            "name": "ConfigLoader",
+            "type": "isaac::alice::ConfigLoader"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "open_gripper_for_putdown",
+        "components": [
+          {
+            "name": "ConfigLoader",
+            "type": "isaac::alice::ConfigLoader"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "go_to_lift_pose_after_putdown",
+        "components": [
+          {
+            "name": "ConfigLoader",
+            "type": "isaac::alice::ConfigLoader"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "time_delay",
+        "components": [
+          {
+            "name": "TimerBehavior",
+            "type": "isaac::behavior_tree::TimerBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      }
+    ],
+    "edges": [
+      {
+        "source": "joint_follow_path/CompositePublisher/path",
+        "target": "joint_follow_path/FollowPath/path"
+      },
+      {
+        "source": "joint_follow_path/FollowPath/goal",
+        "target": "interface/Subgraph/joint_command"
+      },
+      {
+        "source": "interface/Subgraph/joint_state",
+        "target": "joint_follow_path/FollowPath/state"
+      },
+      {
+        "source": "cartesian_planner/EndEffectorGlobalPlanner/joint_target",
+        "target": "interface/Subgraph/joint_command"
+      },
+      {
+        "source": "interface/Subgraph/joint_state",
+        "target": "cartesian_planner/EndEffectorGlobalPlanner/joint_state"
+      },
+      {
+        "source": "suction_follow_path/CompositePublisher/path",
+        "target": "suction_follow_path/FollowPath/path"
+      },
+      {
+        "source": "suction_follow_path/FollowPath/goal",
+        "target": "interface/Subgraph/io_command"
+      },
+      {
+        "source": "interface/Subgraph/io_state",
+        "target": "suction_follow_path/FollowPath/state"
+      }
+    ]
+  },
+  "config": {
+    "mission": {
+      "NodeGroup": {
+        "node_names": [
+          "$(fullname place_object)"
+        ]
+      }
+    },
+    "place_object": {
+      "NodeGroup": {
+        "node_names": [
+          "$(fullname relink_destination_pose)",
+          "$(fullname set_target_poses)",
+          "$(fullname go_to_approach_pose)",
+          "$(fullname joint_follow_path)",
+          "$(fullname time_delay)",
+          "$(fullname go_to_preputdown_pose)",
+          "$(fullname cartesian_planner)",
+          "$(fullname time_delay)",
+          "$(fullname go_to_putdown_pose)",
+          "$(fullname cartesian_planner)",
+          "$(fullname time_delay)",
+          "$(fullname open_gripper_for_putdown)",
+          "$(fullname suction_follow_path)",
+          "$(fullname time_delay)",
+          "$(fullname go_to_lift_pose_after_putdown)",
+          "$(fullname cartesian_planner)"
+        ]
+      }
+    },
+    "cartesian_planner": {
+      "EndEffectorGlobalPlanner": {
+        "tick_period": "10Hz",
+        "report_success": true,
+        "p_tolerance": 0.02,
+        "q_tolerance": 0.03,
+        "use_pose_tree": true
+      }
+    },
+    "go_to_preputdown_pose": {
+      "ConfigLoader": {
+        "config": {
+          "place_task.cartesian_planner": {
+            "EndEffectorGlobalPlanner": {
+              "target_pose": "destination_pre_putdown"
+            }
+          }
+        }
+      }
+    },
+    "suction_follow_path": {
+      "CompositePublisher": {
+        "tick_period": "30Hz",
+        "atlas": "atlas/CompositeAtlas",
+        "report_success": true
+      },
+      "CompositeMetric": {
+        "use_config_schema": true,
+        "schema": {
+          "entity": ["gripper"],
+          "measure": "none"
+        }
+      },
+      "FollowPath": {
+        "tick_period": "30Hz",
+        "wait_time": 0.0,
+        "tolerance": 0.1
+      }
+    },
+    "go_to_putdown_pose": {
+      "ConfigLoader": {
+        "config": {
+          "place_task.cartesian_planner": {
+            "EndEffectorGlobalPlanner": {
+              "target_pose": "destination_putdown"
+            }
+          }
+        }
+      }
+    },
+    "go_to_lift_pose_after_putdown": {
+      "ConfigLoader": {
+        "config": {
+          "place_task.cartesian_planner": {
+            "EndEffectorGlobalPlanner": {
+              "target_pose": "destination_after_putdown"
+            }
+          }
+        }
+      }
+    },
+    "set_target_poses": {
+      "PoseInitializerPutdownPose": {
+        "lhs_frame": "destination",
+        "rhs_frame": "destination_putdown",
+        "report_success": true
+      },
+      "PoseInitializerPrePutdownPose": {
+        "lhs_frame": "destination_putdown",
+        "rhs_frame": "destination_pre_putdown",
+        "report_success": true
+      },
+      "PoseInitializerAfterPutdownPose": {
+        "lhs_frame": "destination_putdown",
+        "rhs_frame": "destination_after_putdown",
+        "report_success": true
+      }
+    },
+    "joint_follow_path": {
+      "CompositePublisher": {
+        "tick_period": "30Hz",
+        "atlas": "atlas/CompositeAtlas",
+        "report_success": true
+      },
+      "FollowPath": {
+        "tick_period": "30Hz",
+        "wait_time": 0.0,
+        "tolerance": 0.05
+      }
+    },
+    "time_delay": {
+      "TimerBehavior": {
+        "delay": 1.0
+      }
+    }
+  }
+}

@@ -1,0 +1,235 @@
+{
+  "graph": {
+    "nodes": [
+      {
+        "name": "map",
+        "start_order": -100,
+        "components": [
+          {
+            "name": "isaac.map.Map",
+            "type": "isaac::map::Map"
+          },
+          {
+            "name": "map",
+            "type": "isaac::navigation::NavigationMap"
+          },
+          {
+            "name": "occupancy",
+            "type": "isaac::map::OccupancyGridMapLayer"
+          },
+          {
+            "name": "restricted_area",
+            "type": "isaac::map::PolygonMapLayer"
+          },
+          {
+            "name": "unity_initializer",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "waypoints",
+            "type": "isaac::map::WaypointMapLayer"
+          }
+        ]
+      }
+    ],
+    "edges": []
+  },
+  "config": {
+    "map": {
+      "occupancy": {
+        "filename": "packages/multi_robot_fof/assets/multi_robot_fof_small_warehouse.png",
+        "cell_size": 0.05
+      },
+      "restricted_area": {
+        "tick_period": "1.0",
+        "polygons": {
+          "station_1": {
+            "points": [
+              [12.0, 8.37], [12.0, 10.63], [12.95, 10.63], [12.95, 8.37]
+            ]
+          },
+          "station_2": {
+            "points": [
+              [12.0, 12.72], [12.0, 14.72], [12.95, 14.72], [12.95, 12.72]
+            ]
+          },
+          "station_3": {
+            "points": [
+              [18.75, 8.37], [18.75, 10.63], [19.7, 10.63], [19.7, 8.37]
+            ]
+          },
+          "station_4": {
+            "points": [
+              [18.75, 12.72], [18.75, 14.72], [19.7, 14.72], [19.7, 12.72]
+            ]
+          },
+          "parking_area": {
+            "points": [
+              [0.25, 6.87], [0.25, 13.17], [1.95, 13.17], [1.95, 12.87], [0.45, 12.87],
+              [0.45, 11.17], [1.95, 11.17], [1.95, 10.87], [0.45, 10.87], [0.45, 9.17],
+              [1.95, 9.17], [1.95, 8.87], [0.45, 8.87], [0.45, 7.17], [1.95, 7.17], [1.95, 6.87]
+            ]
+          }
+        }
+      },
+      "unity_initializer": {
+        "lhs_frame": "world",
+        "rhs_frame": "sim",
+        "pose": {
+          "translation": [17.175, 11.575, 0.0],
+          "rotation": {"yaw_radians": 1.57079633}
+        }
+      },
+      "waypoints": {
+        "vis_cell_size": 0.1,
+        "waypoints": {
+          "parking_0": {
+            "pose": {
+              "translation": [1.95, 8.02, 0.0],
+              "rotation": {"yaw_radians": 0}
+            },
+            "color": [255,128,0],
+            "radius": 0.5
+          },
+          "parking_1": {
+            "pose": {
+              "translation": [1.95, 10.02, 0.0],
+              "rotation": {"yaw_radians": 0}
+            },
+            "color": [32,220,64],
+            "radius": 0.5
+          },
+          "parking_2": {
+            "pose": {
+              "translation": [1.95, 12.02, 0.0],
+              "rotation": {"yaw_radians": 0}
+            },
+            "color": [220,16,16],
+            "radius": 0.5
+          },
+          "preparking_0": {
+            "pose": {
+              "translation": [3.45, 8.02, 0.0],
+              "rotation": {"yaw_radians": 0}
+            },
+            "color": [255,128,0],
+            "radius": 0.1
+          },
+          "preparking_1": {
+            "pose": {
+              "translation": [3.45, 10.02, 0.0],
+              "rotation": {"yaw_radians": 0}
+            },
+            "color": [32,220,64],
+            "radius": 0.1
+          },
+          "preparking_2": {
+            "pose": {
+              "translation": [3.45, 12.02, 0.0],
+              "rotation": {"yaw_radians": 0}
+            },
+            "color": [220,16,16],
+            "radius": 0.1
+          },
+          "station_0": {
+            "pose": {
+              "translation": [13.95, 9.87, 0],
+              "rotation": {"yaw_radians": 1.57}
+            },
+            "color": [255,128,0],
+            "radius": 0.5
+          },
+          "station_1": {
+            "pose": {
+              "translation": [13.95, 13.27, 0],
+              "rotation": {"yaw_radians": -1.57}
+            },
+            "color": [32,220,64],
+            "radius": 0.5
+          },
+          "station_2": {
+            "pose": {
+              "translation": [17.85, 9.87, 0],
+              "rotation": {"yaw_radians": 1.57}
+            },
+            "color": [220,16,16],
+            "radius": 0.5
+          },
+          "station_3": {
+            "pose": {
+              "translation": [17.85, 13.27, 0],
+              "rotation": {"yaw_radians": -1.57}
+            },
+            "color": [16,16,220],
+            "radius": 0.5
+          },
+          "exit_station_0": {
+            "pose": {
+              "translation": [14.95, 10.37, 0],
+              "rotation": {"yaw_radians": 0}
+            },
+            "color": [255,128,0],
+            "radius": 0.1
+          },
+          "exit_station_1": {
+            "pose": {
+              "translation": [14.95, 12.87, 0],
+              "rotation": {"yaw_radians": 0}
+            },
+            "color": [32,220,64],
+            "radius": 0.1
+          },
+          "exit_station_2": {
+            "pose": {
+              "translation": [16.85, 10.37, 0],
+              "rotation": {"yaw_radians": 3.14}
+            },
+            "color": [220,16,16],
+            "radius": 0.1
+          },
+          "exit_station_3": {
+            "pose": {
+              "translation": [16.85, 12.87, 0],
+              "rotation": {"yaw_radians": 3.14}
+            },
+            "color": [16,16,220],
+            "radius": 0.1
+          },
+          "entry_station_0": {
+            "pose": {
+              "translation": [13.95, 8.37, 0],
+              "rotation": {"yaw_radians": 1.57}
+            },
+            "color": [255,128,0],
+            "radius": 0.1
+          },
+          "entry_station_1": {
+            "pose": {
+              "translation": [13.95, 14.87, 0],
+              "rotation": {"yaw_radians": -1.57}
+            },
+            "color": [32,220,64],
+            "radius": 0.1
+          },
+          "entry_station_2": {
+            "pose": {
+              "translation": [17.85, 8.37, 0],
+              "rotation": {"yaw_radians": 1.57}
+            },
+            "color": [220,16,16],
+            "radius": 0.1
+          },
+          "entry_station_3": {
+            "pose": {
+              "translation": [17.85, 14.37, 0],
+              "rotation": {"yaw_radians": -1.57}
+            },
+            "color": [16,16,220],
+            "radius": 0.1
+          }
+        },
+        "tick_period": "1.0"
+      }
+    }
+  }
+}

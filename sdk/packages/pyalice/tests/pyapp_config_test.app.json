@@ -1,0 +1,34 @@
+{
+  "name": "pyapp_config_test",
+  "modules": [],
+  "graph": {
+    "nodes": [
+      {
+        "name": "node",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      }
+    ]
+  },
+  "config": {
+    "node": {
+      "ledger": {
+        "dummy_bool": true,
+        "dummy_float": 1.111,
+        "dummy_list": [
+          1,
+          2,
+          3
+        ],
+        "dummy_dict": {
+          "value_int": 100,
+          "value_string": "hi"
+        }
+      }
+    }
+  }
+}

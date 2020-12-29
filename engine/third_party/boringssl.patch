@@ -1,0 +1,39 @@
+Copyright (c) 2019-2020, NVIDIA CORPORATION. All rights reserved.
+
+NVIDIA CORPORATION and its licensors retain all intellectual property
+and proprietary rights in and to this software, related documentation
+and any modifications thereto. Any use, reproduction, disclosure or
+distribution of this software and related documentation without an express
+license agreement from NVIDIA CORPORATION is strictly prohibited.
+---
+
+diff --git BUILD BUILD
+index af7bd303f..334519025 100644
+--- BUILD
++++ BUILD
+@@ -68,6 +68,9 @@ posix_copts = [
+     # operations for reference counting rather than locks. However, it's
+     # known not to work on some Android builds.
+     # "-DOPENSSL_C11_ATOMIC",
++    # To deal with ssl conflict with Unity
++    # https://forum.unity.com/threads/native-library-use-openssl-conflict-with-unity-on-linux.404847/
++    "-fvisibility=hidden",
+ ]
+ 
+ boringssl_copts = select({
+@@ -122,6 +125,7 @@ cc_library(
+         ":mac_x86_64": [],
+         "//conditions:default": ["-lpthread"],
+     }),
++    alwayslink = True,
+     visibility = ["//visibility:public"],
+ )
+ 
+@@ -131,6 +135,7 @@ cc_library(
+     hdrs = ssl_headers,
+     copts = boringssl_copts_cxx,
+     includes = ["src/include"],
++    alwayslink = True,
+     visibility = ["//visibility:public"],
+     deps = [
+         ":crypto",

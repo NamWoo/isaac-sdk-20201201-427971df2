@@ -1,0 +1,34 @@
+{
+  "name": "stereo_dummy",
+  "modules": [
+    "sight",
+    "message_generators"
+  ],
+  "config": {
+    "camera_generator": {
+      "isaac.CameraGenerator": {
+        "rows": 240,
+        "cols": 320,
+        "tick_period": "50ms"
+      }
+    }
+  },
+  "graph": {
+    "nodes": [
+      {
+        "name": "camera_generator",
+        "components": [
+          {
+            "name": "isaac.alice.MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "isaac.CameraGenerator",
+            "type": "isaac::message_generators::CameraGenerator"
+          }
+        ]
+      }
+    ],
+    "edges": []
+  }
+}

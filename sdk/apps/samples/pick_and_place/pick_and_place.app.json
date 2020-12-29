@@ -1,0 +1,188 @@
+{
+  "name": "pick_and_place",
+  "modules": [
+    "behavior_tree",
+    "composite",
+    "sight"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "atlas",
+        "components": [
+          {
+            "name": "CompositeAtlas",
+            "type": "isaac::composite::CompositeAtlas"
+          }
+        ]
+      },
+      {
+        "name": "entry_point",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "ParallelBehavior",
+            "type": "isaac::behavior_tree::ParallelBehavior"
+          }
+        ]
+      },
+      {
+        "name": "task_repeater",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "RepeatBehavior",
+            "type": "isaac::behavior_tree::RepeatBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "task_check_selector",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySelectorBehavior",
+            "type": "isaac::behavior_tree::MemorySelectorBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "done_checker",
+        "components": [
+          {
+            "name": "PyCodelet",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "task_done_sequence",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "in_task_done_checker",
+        "components": [
+          {
+            "name": "PyCodelet",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "done_signal",
+        "components": [
+          {
+            "name": "PyCodelet",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "pick_task",
+        "subgraph": "apps/samples/pick_and_place/pick_task.json"
+      },
+      {
+        "name": "place_task",
+        "subgraph": "apps/samples/pick_and_place/place_task.json"
+      },
+      {
+        "name": "pick_and_place_behavior",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "pose_initializer",
+        "start_order": -100,
+        "components": [
+          {
+            "name": "PoseInitializerCamera",
+            "type": "isaac::alice::PoseInitializer"
+          }
+        ]
+      }
+    ]
+  },
+  "config": {
+    "entry_point": {
+      "NodeGroup": {
+        "node_names": [
+          "task_repeater",
+          "done_checker"
+        ]
+      },
+      "ParallelBehavior": {
+        "success_threshold": 1
+      }
+    },
+    "task_repeater": {
+      "NodeGroup": {
+        "node_names": [
+          "task_check_selector"
+        ]
+      }
+    },
+    "task_check_selector": {
+      "NodeGroup": {
+        "node_names": [
+          "in_task_done_checker",
+          "task_done_sequence"
+        ]
+      }
+    },
+    "task_done_sequence": {
+      "NodeGroup": {
+        "node_names": [
+          "pick_and_place_behavior",
+          "done_signal"
+        ]
+      }
+    },
+    "pick_and_place_behavior": {
+      "NodeGroup": {
+        "node_names": [
+          "pick_task.mission",
+          "place_task.mission"
+        ]
+      }
+    },
+    "pose_initializer": {
+      "PoseInitializerCamera": {
+        "rhs_frame": "camera",
+        "report_success": true
+      }
+    }
+  }
+}

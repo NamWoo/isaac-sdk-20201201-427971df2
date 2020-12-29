@@ -1,0 +1,433 @@
+// ISAAC SDK Development Pipeline
+//
+// This will take care of building and doing basic tests for merge requests
+// It will help to give developers faster feedback and for code reviewers
+// to verify the compliance of the commit
+//
+// Copyright (c) 2020, NVIDIA CORPORATION. All rights reserved.
+//
+// NVIDIA CORPORATION and its licensors retain all intellectual property
+// and proprietary rights in and to this software, related documentation
+// and any modifications thereto. Any use, reproduction, disclosure or
+// distribution of this software and related documentation without an express
+// license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+
+// Call gerrit over SSH and set the verified score of the CL along with a status message
+def set_gerrit_verified( String score="0", String gerritMessage = "Not verified" ) {
+    withCredentials([
+        sshUserPrivateKey(
+            credentialsId: env.CREDENTIALS_ID,
+            keyFileVariable: 'SSH_CREDENTIALS_FILE',
+            usernameVariable: 'SSH_CREDENTIALS_USER'
+        )
+    ]) {
+        sh "ssh -i '$SSH_CREDENTIALS_FILE' \
+        -o StrictHostKeyChecking=no \
+        -p 29418 ${SSH_CREDENTIALS_USER}@${env.GERRIT_SERVER} \
+        gerrit review \
+            --label \\'CI-Verified=${score}\\' \
+            --message \\'${gerritMessage}\\' \
+            -n OWNER \
+            ${params.GERRIT_CHANGE_NUMBER},${params.GERRIT_PATCHSET_NUMBER}"
+    }
+}
+
+def run_in_ci_docker(String command, Boolean nvidia_runtime=false) {
+    script {
+        def isaac_build_container = docker.build('isaacbuild', '-f engine/engine/build/docker/Dockerfile engine/engine/build')
+        def runtime = ''
+        if(nvidia_runtime) {
+            runtime = '--runtime=nvidia'
+        }
+
+        isaac_build_container.inside("${DOCKER_ARGUMENTS} ${runtime}") {
+            dir(HOME) {
+                dir(WORKSPACE) {
+                    sh "echo build --remote_http_cache=http://${NODE_NAME}:8080 > ~/.bazelrc"
+                    sh "echo build --repository_cache=/var/cache/bazel/repository >> ~/.bazelrc"
+                    sh command
+                }
+            }
+        }
+    }
+}
+
+// Sends a notification to Slack
+// color: The color to use on to hightlight the message.
+// can be one of: 'good', 'warning', 'danger', or an hex color code
+// message: Content of the message
+// channel: String for message destination. Can be a #channel or a @username
+def slack_notify(String color="warning", message = "Build finished", channel = "#rdk-team-ci") {
+    status = currentBuild.currentResult.toLowerCase()
+    try {
+        slackSend(
+            message: message,
+            attachments: """[
+                {
+                "color": "${color}",
+                "fallback": "Build ${status}: ${RUN_DISPLAY_URL}",
+                "actions": [
+                    {
+                        "type": "button",
+                        "text": "See commit",
+                        "url": "${get_cl_url()}"
+                    }
+                ]
+                }
+            ]
+            """,
+            channel: channel
+        )
+    }
+    catch (Exception e) {
+        emailext (
+            to: env.CI_EMAIL_NOTICE_DESTINATARY,
+            subject: "[CI-CD][ISAAC] Slack notifications failing",
+            mimeType: 'text/html',
+            body: """
+            <html>
+                <body>
+                    <h1>
+                        Slack notifications are failing
+                    </h1>
+                    <p>
+                        <dl>
+                            <dt>Build URL</dt>
+                            <dd>
+                                <a href="${env.RUN_DISPLAY_URL}">
+                                    ${env.JOB_NAME}
+                                    [${env.BUILD_NUMBER}]
+                                </a>
+                            </dd>
+                            <dt>Original message</dt>
+                            <dd><code>${message}</code></dd>
+                        </dl>
+                    </p>
+                </body>
+            </html>
+            """
+        )
+    }
+}
+
+def get_cl_url() {
+    return "https://${GERRIT_SERVER}/r/#/c/${params.GERRIT_CHANGE_NUMBER}/${params.GERRIT_PATCHSET_NUMBER}"
+}
+
+def send_email_notification( String destinataries ) {
+    emailext (
+        to: destinataries,
+        subject: "[CI-CD][Isaac][Errors] ${params.GERRIT_CHANGE_NUMBER}",
+        mimeType: 'text/html',
+        body: """
+        <html>
+            <body>
+                <h1>
+                    Build was cancelled.
+                </h1>
+                <p>
+                    You can view the console output
+                    at <a href='${env.RUN_DISPLAY_URL}'>
+                        ${env.JOB_NAME}
+                        [${env.BUILD_NUMBER}]
+                    </a> or
+                    <a href='${get_cl_url()}'>
+                        review the CL
+                    </a>
+                </p>
+            </body>
+        </html>
+        """
+    )
+}
+pipeline {
+    agent none
+    environment {
+        GERRIT_SERVER="git-master.nvidia.com"
+        CREDENTIALS_ID="isaac-git-master"
+        CI_EMAIL_NOTICE_DESTINATARY = "isacc-sdk-ci@exchange.nvidia.com"
+        DOCKER_ARGUMENTS='-e HOME=/tmp -v /etc/passwd:/etc/passwd:ro -v /var/cache/bazel/repository:/var/cache/bazel/repository -v /tmp:/tmp'
+        SCORE=0
+        ARTIFACTORY_URL_X86="https://urm.nvidia.com/artifactory/sw-isaac-sdk-generic-local/x86_tests"
+        ARTIFACTORY_URL_JETSON="https://urm.nvidia.com/artifactory/sw-isaac-sdk-generic-local/jetson_tests"
+    }
+    parameters {
+        string(
+            name: 'GERRIT_CHANGE_NUMBER',
+            description: "The Gerrit Change number"
+        )
+        string(
+            name: 'GERRIT_PATCHSET_NUMBER',
+            description: "The Gerrit patchSet number"
+        )
+        string(
+            name: 'REF',
+            description: "Branch to build. Use a branch name or full REF",
+        )
+    }
+    options {
+        ansiColor('xterm')
+        timestamps()
+        timeout(time: 8, unit: 'HOURS')
+    }
+    stages {
+        stage("Pre-Build Actions") {
+            agent {
+                node {
+                    label 'isaac'
+                }
+            }
+            stages {
+                stage("Validate arguments") {
+                    steps {
+                        script {
+                            if(!params.GERRIT_CHANGE_NUMBER || !params.GERRIT_PATCHSET_NUMBER ) {
+                                error("Missing parameters")
+                            }
+                            env.GIT_AUTHOR = sh(
+                                script: 'git show -s --format=%ae | sed "s/@nvidia\\.com//"',
+                                returnStdout: true
+                            )
+                            env.GIT_SHORT = sh(script: 'git show -s -1 --format=%s', returnStdout: true)
+                        }
+                    }
+                }
+                stage("Notify gerrit of running pipeline") {
+                    steps {
+                        script {
+                            set_gerrit_verified("0", "CI build started, see progress at ${RUN_DISPLAY_URL}")
+                        }
+                    }
+                }
+                stage("Lint") {
+                    steps {
+                        run_in_ci_docker 'cd engine; bazel test --config=lint ...; cd ../sdk; bazel test --config=lint ...'
+                    }
+                    post {
+                        failure {
+                            set_gerrit_verified("-1", "❌ Linter checks failed. ${RUN_DISPLAY_URL}")
+                            slack_notify(
+                                "danger",
+                                "❌ ${env.GIT_SHORT} failed linter checks",
+                                "@${env.GIT_AUTHOR}"
+                            )
+                        }
+                        always {
+                            cleanWs()
+                        }
+                    }
+                }
+            }
+        }
+        stage("Parallel"){
+            parallel {
+                stage("Jetson Branch") {
+                    agent none
+                    stages {
+                        stage("Jetson Build on x86"){
+                            agent {
+                                node {
+                                    label 'isaac'
+                                }
+                            }
+                            steps {
+                                withCredentials([usernamePassword(credentialsId: 'artifactory-login', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASS')]) {
+                                    run_in_ci_docker("""
+                                    chmod +x engine/engine/build/scripts/artif_build_upload.sh
+                                    ./engine/engine/build/scripts/artif_build_upload.sh -d jetpack44 -a ${env.ARTIFACTORY_URL_JETSON}/${BUILD_NUMBER} -u u$ARTIFACTORY_USER -p $ARTIFACTORY_PASS
+                                    """, false)
+                                }
+                            }
+                            post {
+                                always {
+                                    cleanWs()
+                                }
+                            }
+                        }
+                        stage("Jetson Run"){
+                            agent {
+                                node {
+                                    label 'jetson-4.4'
+                                }
+                            }
+                            steps {
+                                sh "rm -rf jetson_testlog"
+                                withCredentials([usernamePassword(credentialsId: 'artifactory-login', usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASS')]) {
+                                    sh "chmod +x engine/engine/build/scripts/artif_download_run.sh"
+                                    sh "./engine/engine/build/scripts/artif_download_run.sh u$ARTIFACTORY_USER $ARTIFACTORY_PASS ${env.ARTIFACTORY_URL_JETSON}/${BUILD_NUMBER} ${BUILD_NUMBER}"
+                                }
+                            }
+                            post {
+                                always {
+                                    archiveArtifacts artifacts: 'jetson_testlog/**/*.xml'
+                                    junit 'jetson_testlog/**/*.xml'
+                                    sh "rm -r *"
+                                    sh "rm -rf /tmp/isaac"
+                                }
+                            }
+                        }
+                    }
+                }
+                stage("x86 Branch") {
+                    agent {
+                        node {
+                            label 'isaac && gpu'
+                        }
+                    }
+                    stages {
+                        stage("Build") {
+                            steps {
+                                run_in_ci_docker "cd engine; bazel build ...; cd ../sdk; bazel build ..."
+                            }
+                            post {
+                                failure {
+                                    set_gerrit_verified("-1", "❌ Build errors. ${RUN_DISPLAY_URL}")
+                                    slack_notify("danger", "❌ ${env.GIT_SHORT} not built", "@${env.GIT_AUTHOR}")
+                                    script {
+                                        env.SCORE=-1
+                                    }
+                                }
+                            }
+                        }
+                        stage("Test") {
+                            steps {
+                                withCredentials([usernamePassword(credentialsId: 'artifactory-login',
+                                    usernameVariable: 'ARTIFACTORY_USER', passwordVariable: 'ARTIFACTORY_PASS')]) {
+                                    script {
+                                        def isaac_build_container = docker.build('isaacbuild', '-f engine/engine/build/docker/Dockerfile engine/engine/build')
+                                        def runtime = '--runtime=nvidia'
+                                        isaac_build_container.inside("${DOCKER_ARGUMENTS} ${runtime}") {
+                                            dir(HOME) {
+                                                dir(WORKSPACE) {
+                                                    def BAZEL_TESTS_FAILED = "false"
+
+                                                    sh "echo build --remote_http_cache=http://${NODE_NAME}:8080 > ~/.bazelrc"
+                                                    sh "echo build --repository_cache=/var/cache/bazel/repository >> ~/.bazelrc"
+
+                                                    try {
+                                                        dir("engine") {
+                                                            sh "[ -d bazel-testlogs ] && rm -rf bazel-testlogs/*"
+                                                            sh "bazel test --test_tag_filters=-performance ... || bazel test --jobs 1 --test_tag_filters=-performance ..."
+                                                        }
+
+                                                        dir("sdk") {
+                                                            sh "[ -d bazel-testlogs ] && rm -rf bazel-testlogs/*"
+                                                            sh "bazel test --test_tag_filters=-performance ... || bazel test --jobs 1 --test_tag_filters=-performance ..."
+                                                        }
+                                                    }
+                                                    catch (Exception e) {
+                                                        sh "echo Bazel tests failed"
+                                                        BAZEL_TESTS_FAILED = "true"
+                                                    }
+                                                    sh "./engine/engine/build/scripts/bazel_tests_upload.sh u$ARTIFACTORY_USER $ARTIFACTORY_PASS ${env.ARTIFACTORY_URL_X86}/${BUILD_NUMBER}.tar"
+                                                    sh "rm -rf bazel-testlog"
+                                                    sh "rm -rf $WORKSPACE/bazel-testlog"
+                                                    sh "curl -u$ARTIFACTORY_USER:$ARTIFACTORY_PASS -O ${env.ARTIFACTORY_URL_X86}/${BUILD_NUMBER}.tar"
+                                                    sh "tar -xvf ${BUILD_NUMBER}.tar"
+                                                    sh "cp -r bazel_tests_directory $WORKSPACE/bazel_testlog"
+                                                    if(BAZEL_TESTS_FAILED == 'true') {
+                                                        sh "exit -1"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            post {
+                                failure {
+                                    set_gerrit_verified("-1", "❌ Build failed tests. ${RUN_DISPLAY_URL}")
+                                    slack_notify("danger", "❌ ${env.GIT_SHORT} failed tests", "@${env.GIT_AUTHOR}")
+                                    script {
+                                        env.SCORE=-1
+                                    }
+                                }
+                                always {
+                                    junit 'bazel_testlog/**/test.xml'
+                                    cleanWs()
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stage("Release Branch") {
+                    agent {
+                        node {
+                            label 'isaac && gpu'
+                        }
+                    }
+                    stages {
+                        stage("Build release") {
+                            steps {
+                                run_in_ci_docker "release/create_release.sh"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            node ('isaac'){
+                cleanWs ()
+            }
+        }
+        success {
+            node ('isaac'){
+                set_gerrit_verified("+1", "✅ Build successful. ${RUN_DISPLAY_URL}")
+                slack_notify("good", "✅ ${env.GIT_SHORT} Build successful", "@${env.GIT_AUTHOR}")
+            }
+        }
+        failure {
+            node ('isaac'){
+                script {
+                    if(env.SCORE == 0) {
+                        set_gerrit_verified(
+                            "-1",
+                            "❌ Failed to provide score. See log for details ${RUN_DISPLAY_URL}"
+                        )
+                        slack_notify(
+                            "danger",
+                            "❌ Failed to provide score for ${env.GIT_SHORT}",
+                            '#isaac-sdk-ci'
+                        )
+                    }
+                }
+            }
+        }
+        unstable {
+            node ('isaac'){
+                script {
+                    set_gerrit_verified(
+                        "-1",
+                        "❌ Build passed, but some tests failed. See log for details ${RUN_DISPLAY_URL}"
+                    )
+                    slack_notify(
+                        "danger",
+                        "❌ Build passed, but some tests failed for ${env.GIT_SHORT}",
+                        '#isaac-sdk-ci'
+                    )
+                }
+            }
+        }
+        aborted {
+            node ('isaac'){
+                send_email_notification(env.CI_EMAIL_NOTICE_DESTINATARY)
+                script {
+                    set_gerrit_verified(
+                        "-1",
+                        "❌ Build canceled. See log for details ${RUN_DISPLAY_URL}"
+                    )
+                    slack_notify(
+                        "danger",
+                        "❌ Build canceled for ${env.GIT_SHORT}",
+                        '#isaac-sdk-ci'
+                    )
+                }
+            }
+        }
+    }
+}

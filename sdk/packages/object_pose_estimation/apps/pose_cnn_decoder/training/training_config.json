@@ -1,0 +1,62 @@
+{
+  "online_training": true,
+  "app_filename": "packages/object_pose_estimation/apps/pose_cnn_decoder/training/training.app.json",
+  "sleep_duration": 1,
+  "decoding_full_object": true,
+  "scene": "Factory01",
+  "robot_prefab": "IndustrialDolly",
+
+  "training_data_dir": "/tmp/pose_data/training",
+  "num_training_data": 50000,
+
+  "add_noise_to_image": false,
+
+  "gpu_memory_usage": 0.8,
+  "gpu_visible_device": "0",
+  "checkpoint": "",
+  "train_logdir": "/tmp/autoenc_logs/",
+
+  "num_prefetch": 3,
+  "batch_size": 64,
+  "learning_rate": 2e-4,
+  "training_steps": 50000,
+  "summary_every": 10,
+  "save_every": 500,
+
+  "validation": false,
+  "validation_data_dir": "/tmp/pose_data/validation",
+  "num_validation_data": 2000,
+  "validation_every": 500,
+  "validation_batch_size": 200,
+  "pinhole_focal": [925.74, 925.74],
+  "image_dim": [720, 1280],
+  "pinhole_center": [360, 640],
+  "rotation_err_threshold": 10,
+  "translation_err_threshold": [0.08, 0.05, 0.15],
+  "depth_roi": [1.7, 3.5],
+
+  "latent_space_size": 128,
+  "num_filter": [128, 256, 512, 512],
+  "kernel_size_encoder": 5,
+  "strides": [2, 2, 2, 2],
+  "batch_norm": false,
+
+  "num_fc_layers_encoder_bbox": [128, 128],
+
+  "variational": false,
+  "kernel_size_decoder": 5,
+  "bootstrap_ratio": 6,
+  "auxiliary_mask": true,
+  "decoder_loss": "L2",
+
+  "translation_loss": "L1",
+  "rotation_loss": "AcosLoss",
+  "num_fc_layers_translation": [128],
+  "num_fc_layers_rotation": [128],
+  "symmetry_axes": [2],
+  "num_rotation_symmetry": 2,
+  "quaternion_mag_loss_weight": 3,
+
+  "norm_regularize": 0,
+  "losses_weights": [1, 1, 1]
+}

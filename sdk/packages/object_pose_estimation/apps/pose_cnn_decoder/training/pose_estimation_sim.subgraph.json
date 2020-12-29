@@ -1,0 +1,198 @@
+{
+  "modules": [
+    "engine_tcp_udp",
+    "ml",
+    "navsim"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Subgraph",
+            "type": "isaac::alice::Subgraph"
+          },
+          {
+            "name": "output",
+            "type": "isaac::alice::TcpSubscriber"
+          },
+          {
+            "name": "input",
+            "type": "isaac::alice::TcpPublisher"
+          },
+          {
+            "name": "time_sync",
+            "type": "isaac::alice::TimeSynchronizer"
+          }
+        ]
+      },
+      {
+        "name": "scenario_manager",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "scenario_manager",
+            "type": "isaac::navsim::ScenarioManager"
+          }
+        ]
+      },
+      {
+        "name": "encoder_bounding_boxes",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "LabelToBoundingBox",
+            "type": "isaac::ml::LabelToBoundingBox"
+          }
+        ]
+      },
+      {
+        "name": "encoder_bounding_box_padding",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "random",
+            "type": "isaac::alice::Random"
+          },
+          {
+            "name": "BoundingBoxPadding",
+            "type": "isaac::ml::BoundingBoxPadding"
+          }
+        ]
+      },
+      {
+        "name": "decoder_bounding_box_padding",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "random",
+            "type": "isaac::alice::Random"
+          },
+          {
+            "name": "BoundingBoxPadding",
+            "type": "isaac::ml::BoundingBoxPadding"
+          }
+        ]
+      },
+      {
+        "name": "decoder_bounding_boxes",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "LabelToBoundingBox",
+            "type": "isaac::ml::LabelToBoundingBox"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "interface/output/encoder_segmentation_class",
+        "target": "encoder_bounding_boxes/LabelToBoundingBox/class_segmentation"
+      },
+      {
+        "source": "interface/output/encoder_segmentation_instance",
+        "target": "encoder_bounding_boxes/LabelToBoundingBox/instance_segmentation"
+      },
+      {
+        "source": "interface/output/encoder_segmentation_labels",
+        "target": "encoder_bounding_boxes/LabelToBoundingBox/class_labels"
+      },
+      {
+        "source": "encoder_bounding_boxes/LabelToBoundingBox/detections",
+        "target": "encoder_bounding_box_padding/BoundingBoxPadding/input_detections"
+      },
+      {
+        "source": "encoder_bounding_box_padding/BoundingBoxPadding/output_detections",
+        "target": "interface/Subgraph/encoder_bounding_boxes"
+      },
+      {
+        "source": "interface/output/decoder_segmentation_class",
+        "target": "decoder_bounding_boxes/LabelToBoundingBox/class_segmentation"
+      },
+      {
+        "source": "interface/output/decoder_segmentation_instance",
+        "target": "decoder_bounding_boxes/LabelToBoundingBox/instance_segmentation"
+      },
+      {
+        "source": "interface/output/decoder_segmentation_labels",
+        "target": "decoder_bounding_boxes/LabelToBoundingBox/class_labels"
+      },
+      {
+        "source": "decoder_bounding_boxes/LabelToBoundingBox/detections",
+        "target": "decoder_bounding_box_padding/BoundingBoxPadding/input_detections"
+      },
+      {
+        "source": "decoder_bounding_box_padding/BoundingBoxPadding/output_detections",
+        "target": "interface/Subgraph/decoder_bounding_boxes"
+      },
+      {
+        "source": "scenario_manager/scenario_manager/scenario_control",
+        "target": "interface/input/scenario_control"
+      },
+      {
+        "source": "scenario_manager/scenario_manager/robot",
+        "target": "interface/input/scenario_actors"
+      },
+      {
+        "source": "interface/output/scenario_reply",
+        "target": "scenario_manager/scenario_manager/scenario_reply"
+      }
+    ]
+  },
+  "config": {
+    "interface": {
+      "output": {
+        "port": 55000,
+        "host": "localhost"
+      },
+      "input": {
+        "port": 55001
+      }
+    },
+    "encoder_bounding_boxes": {
+      "LabelToBoundingBox": {
+        "resolution": 2,
+        "min_bbox_size": 40
+      }
+    },
+    "decoder_bounding_boxes": {
+      "LabelToBoundingBox": {
+        "resolution": 2,
+        "min_bbox_size": 40
+      }
+    },
+    "encoder_bounding_box_padding": {
+      "BoundingBoxPadding": {
+        "image_dimensions": [720, 1280],
+        "bbox_padding_range": [-7, 7]
+      }
+    },
+    "decoder_bounding_box_padding": {
+      "BoundingBoxPadding": {
+        "image_dimensions": [720, 1280],
+        "bbox_padding_range": [-7, 7]
+      }
+    }
+  }
+}

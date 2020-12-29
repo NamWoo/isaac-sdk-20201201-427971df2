@@ -1,0 +1,9 @@
+{
+  "cat": {
+    "hobbies": ["sleeping", "boxes"]
+  },
+  "camel": {
+    "type": "mammal",
+    "size": 10.0
+  }
+}

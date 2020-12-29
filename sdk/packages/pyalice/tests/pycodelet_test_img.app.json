@@ -1,0 +1,40 @@
+{
+  "name": "pycodelet_test",
+  "modules": ["message_generators"],
+  "config": {
+    "cpp_image": {
+      "isaac.message_generators.ImageLoader": {
+        "tick_period": "10Hz",
+        "color_filename": "external/isaac_assets/carter_albido.png"
+      }
+    }
+  },
+  "graph": {
+    "nodes": [
+      {
+        "name": "cpp_image",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "isaac.message_generators.ImageLoader",
+            "type": "isaac::message_generators::ImageLoader"
+          }
+        ]
+      },
+      {
+        "name": "py_reader",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      }
+    ],
+    "edges": [
+    ]
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "config": {
+    "pose_initializer": {
+      "PoseInitializerCamera": {
+        "lhs_frame": "ee_link",
+        "pose": [0.558, -0.436, 0.142, -0.691, 0.005, 0.039, 0.111]
+      }
+    },
+    "pick_task.set_target_poses": {
+      "PoseInitializerGrasp": {
+        "pose": [0.5, -0.5, 0.5, 0.5, 0.0, 0.0, 0.095]
+      },
+      "PoseInitializerPreGrasp": {
+        "pose": [1.0, 0.0, 0.0, 0.0, -0.2, 0.0, 0.0]
+      },
+      "PoseInitializerLift": {
+        "pose": [1.0, 0.0, 0.0, 0.0, -0.2, 0.0, 0.0]
+      }
+    },
+    "pick_task.go_to_view_pose": {
+      "ConfigLoader": {
+        "config": {
+          "pick_task.joint_follow_path": {
+            "CompositePublisher": {
+              "path": ["view_pose"]
+            }
+          }
+        }
+      }
+    },
+    "pick_task.open_gripper_before_grasp": {
+      "ConfigLoader": {
+        "config": {
+          "pick_task.suction_follow_path": {
+            "CompositePublisher": {
+              "path": ["suction_off", "valve_off"]
+            }
+          }
+        }
+      }
+    },
+    "pick_task.cartesian_planner": {
+      "EndEffectorGlobalPlanner": {
+        "p_tolerance": 0.1,
+        "q_tolerance": 0.1,
+        "end_effector_name": "vacuum"
+      }
+    },
+    "pick_task.close_gripper_after_grasp": {
+      "ConfigLoader": {
+        "config": {
+          "pick_task.suction_follow_path": {
+            "CompositePublisher": {
+              "path": ["suction_on"]
+            }
+          }
+        }
+      }
+    },
+    "place_task.go_to_approach_pose": {
+      "ConfigLoader": {
+        "config": {
+          "place_task.joint_follow_path": {
+            "CompositePublisher": {
+              "path": ["home_pose"]
+            }
+          }
+        }
+      }
+    },
+    "place_task.open_gripper_for_putdown": {
+      "ConfigLoader": {
+        "config": {
+          "place_task.suction_follow_path": {
+            "CompositePublisher": {
+              "path": ["suction_off", "valve_off"]
+            }
+          }
+        }
+      }
+    },
+    "place_task.cartesian_planner": {
+      "EndEffectorGlobalPlanner": {
+        "end_effector_name": "vacuum"
+      }
+    },
+    "place_task.set_target_poses": {
+      "PoseInitializerPutdownPose": {
+        "pose": [-0.5, 0.5, 0.5, 0.5, 0.0, 0.0, -0.3]
+      },
+      "PoseInitializerPrePutdownPose": {
+        "pose": [1.0, 0.0, 0.0, 0.0, -0.2, 0.0, 0.0]
+      },
+      "PoseInitializerAfterPutdownPose": {
+        "pose": [1.0, 0.0, 0.0, 0.0, -0.2, 0.0, 0.0]
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+    "name": "ping_pong",
+    "modules": ["engine_tcp_udp"],
+    "graph": {
+        "nodes": [
+            {
+                "name": "ping",
+                "components": [
+                    {
+                        "name": "message_ledger",
+                        "type": "isaac::alice::MessageLedger"
+                    },
+                    {
+                        "name": "TcpPublisher",
+                        "type": "isaac::alice::TcpPublisher"
+                    }
+                ]
+            },
+            {
+                "name": "pong",
+                "components": [
+                    {
+                        "name": "message_ledger",
+                        "type": "isaac::alice::MessageLedger"
+                    },
+                    {
+                        "name": "TcpSubscriber",
+                        "type": "isaac::alice::TcpSubscriber"
+                    }
+                ]
+            }
+        ],
+        "edges": []
+    },
+    "config": {
+        "ping": {
+            "TcpPublisher": {
+                "port": 3333
+            }
+        },
+        "pong": {
+            "TcpSubscriber": {
+                "host": "127.0.0.1",
+                "port": 3333
+            }
+        }
+    }
+}

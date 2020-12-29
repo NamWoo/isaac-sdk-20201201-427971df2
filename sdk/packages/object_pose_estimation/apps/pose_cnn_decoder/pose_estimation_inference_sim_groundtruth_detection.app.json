@@ -1,0 +1,164 @@
+{
+  "name": "pose_estimation_inference_sim_groundtruth_detection",
+  "modules": [
+    "ml",
+    "object_pose_estimation",
+    "sight",
+    "viewers"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "simulation",
+        "subgraph": "packages/object_pose_estimation/apps/pose_cnn_decoder/pose_estimation_sim.subgraph.json"
+      },
+      {
+        "name": "object_pose_estimation",
+        "subgraph": "packages/object_pose_estimation/apps/pose_cnn_decoder/pose_estimation_cnn.subgraph.json"
+      },
+      {
+        "name":"color_viewers",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ImageViewer",
+            "type": "isaac::viewers::ImageViewer"
+          },
+          {
+            "name": "DetectionsViewer",
+            "type": "isaac::viewers::DetectionsViewer"
+          }
+        ]
+      },
+      {
+        "name": "pose_viewers",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Detections3Viewer",
+            "type": "isaac::viewers::Detections3Viewer"
+          },
+          {
+            "name": "TensorViewer",
+            "type": "isaac::viewers::TensorViewer"
+          }
+        ]
+      },
+      {
+        "name": "sight_widgets",
+        "components": [
+          {
+            "type": "isaac::sight::SightWidget",
+            "name": "Pose Estimation"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "simulation.interface/TcpSubscriber/encoder_color",
+        "target": "object_pose_estimation.interface/Subgraph/input_image"
+      },
+      {
+        "source": "simulation.interface/TcpSubscriber/encoder_color_intrinsics",
+        "target": "object_pose_estimation.interface/Subgraph/input_intrinsics"
+      },
+      {
+        "source": "simulation.interface/Subgraph/encoder_bounding_boxes",
+        "target": "object_pose_estimation.interface/Subgraph/input_detections"
+      },
+      {
+        "source": "object_pose_estimation.interface/Subgraph/output_poses",
+        "target": "pose_viewers/Detections3Viewer/detections"
+      },
+      {
+        "source": "object_pose_estimation.interface/Subgraph/output_decoder",
+        "target": "pose_viewers/TensorViewer/tensor"
+      },
+      {
+        "source": "simulation.interface/TcpSubscriber/encoder_color",
+        "target": "color_viewers/ImageViewer/image"
+      },
+      {
+        "source": "simulation.interface/TcpSubscriber/encoder_color_intrinsics",
+        "target": "color_viewers/ImageViewer/intrinsics"
+      },
+      {
+        "source": "simulation.interface/Subgraph/encoder_bounding_boxes",
+        "target": "color_viewers/DetectionsViewer/detections"
+      }
+    ]
+  },
+  "config": {
+    "simulation.scenario_manager": {
+      "scenario_manager": {
+        "scene": "Factory01",
+        "robot_prefab": "Dolly"
+      }
+    },
+    "object_pose_estimation.pose_encoder": {
+      "TensorRTInference": {
+        "model_file_path": "external/industrial_dolly_pose_estimation_cnn_model/pose_estimation_cnn_industrial_dolly_bldgK.uff",
+        "force_engine_update": false
+      }
+    },
+    "object_pose_estimation.detection_convertor": {
+      "BoundingBoxEncoder": {
+        "image_dimensions": [720, 1280]
+      }
+    },
+    "object_pose_estimation.pose_estimation": {
+      "PoseCnnDecoder": {
+        "training_camera_vertical_fov_deg": 42,
+        "training_image_dimensions": [720, 1280]
+      }
+    },
+    "object_pose_estimation.detection_filter": {
+      "FilterDetections": {
+        "allowlist_labels": [
+          "Dolly",
+          "dolly"
+        ]
+      }
+    },
+    "color_viewers": {
+      "ImageViewer": {
+        "camera_name": "camera"
+      }
+    },
+    "pose_viewers": {
+      "Detections3Viewer": {
+        "frame": "camera",
+        "object_T_box_center": [1.0, 0, 0, 0, 0, 0, 0.375],
+        "box_dimensions": [0.9, 1.32, 0.25],
+        "mesh_name": "dolly"
+      }
+    },
+    "sight_widgets": {
+      "Pose Estimation": {
+        "type": "2d",
+        "channels": [
+          {
+            "name": "$(fullname color_viewers/ImageViewer/image)"
+          },
+          {
+            "name": "$(fullname color_viewers/DetectionsViewer/detections)",
+            "active": true
+          },
+          {
+            "name": "$(fullname pose_viewers/Detections3Viewer/bounding_box)"
+          },
+          {
+            "name": "$(fullname pose_viewers/Detections3Viewer/mesh)"
+          }
+        ]
+      }
+    }
+  }
+}

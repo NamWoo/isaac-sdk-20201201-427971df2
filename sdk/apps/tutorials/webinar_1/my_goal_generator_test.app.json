@@ -1,0 +1,34 @@
+{
+  "name": "my_goal_generator",
+  "modules": [
+    "//apps/tutorials/webinar_1:go_to_mockup",
+    "//apps/tutorials/webinar_1:my_goal_generator",
+    "sight"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "go_to_mockup",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "GoToMockup",
+            "type": "isaac::tutorials::GoToMockup"
+          }
+        ]
+      }
+    ],
+    "edges": [
+    ]
+  },
+  "config": {
+    "go_to_mockup" : {
+      "GoToMockup" : {
+        "tick_period" : "10ms"
+      }
+    }
+  }
+}

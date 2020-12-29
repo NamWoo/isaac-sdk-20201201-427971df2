@@ -1,0 +1,58 @@
+{
+  "modules": [
+    "cask",
+    "sight"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "subgraph",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Subgraph",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "output",
+            "type": "isaac::cask::Replay"
+          }
+        ]
+      },
+      {
+        "name": "replay_bridge",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ReplayBridge",
+            "type": "isaac::cask::ReplayBridge"
+          }
+        ]
+      }
+    ],
+    "edges": []
+  },
+  "config": {
+    "replay_bridge": {
+      "ReplayBridge": {
+        "replay_component_name": "$(fullname interface/output)",
+        "tick_period": "250ms"
+      }
+    }
+  }
+}

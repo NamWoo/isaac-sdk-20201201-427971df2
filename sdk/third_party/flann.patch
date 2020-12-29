@@ -1,0 +1,37 @@
+Copyright (c) 2019-2020, NVIDIA CORPORATION. All rights reserved.
+
+NVIDIA CORPORATION and its licensors retain all intellectual property
+and proprietary rights in and to this software, related documentation
+and any modifications thereto. Any use, reproduction, disclosure or
+distribution of this software and related documentation without an express
+license agreement from NVIDIA CORPORATION is strictly prohibited.
+---
+
+diff --git src/cpp/flann/flann.cpp src/cpp/flann/flann.cpp
+index ecd465b..2032983 100644
+--- src/cpp/flann/flann.cpp
++++ src/cpp/flann/flann.cpp
+@@ -28,7 +28,7 @@
+ 
+ #define FLANN_FIRST_MATCH
+ 
+-#include "flann.h"
++#include "flann/flann.h"
+ 
+ 
+ struct FLANNParameters DEFAULT_FLANN_PARAMETERS = {
+diff --git src/cpp/flann/util/serialization.h src/cpp/flann/util/serialization.h
+index d731021..01077f6 100644
+--- src/cpp/flann/util/serialization.h
++++ src/cpp/flann/util/serialization.h
+@@ -6,8 +6,8 @@
+ #include <cstdlib>
+ #include <cstring>
+ #include <stdio.h>
+-#include "flann/ext/lz4.h"
+-#include "flann/ext/lz4hc.h"
++#include "lz4.h"
++#include "lz4hc.h"
+ 
+ 
+ namespace flann

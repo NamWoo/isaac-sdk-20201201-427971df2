@@ -1,0 +1,61 @@
+{
+  "name": "pose_cnn_decoder_inference_record",
+  "modules": [
+    "json"
+  ],
+  "backend": {
+    "scheduler": {
+      "use_time_machine": true,
+      "clock_scale": 1.0
+    }
+  },
+  "graph": {
+    "nodes": [
+      {
+        "name": "detection_pose_estimation",
+        "subgraph": "packages/object_pose_estimation/apps/pose_cnn_decoder/detection_pose_estimation_cnn_inference.subgraph.json"
+      },
+      {
+        "name": "replay",
+        "subgraph": "packages/cask/apps/replay.subgraph.json"
+      },
+      {
+        "name": "record",
+        "subgraph": "packages/cask/apps/record.subgraph.json"
+      }
+    ],
+    "edges": [
+      {
+        "source": "replay.interface/output/color",
+        "target": "detection_pose_estimation.interface/Subgraph/color"
+      },
+      {
+        "source": "replay.interface/output/color_intrinsics",
+        "target": "detection_pose_estimation.interface/Subgraph/intrinsics"
+      },
+      {
+        "source": "detection_pose_estimation.interface/Subgraph/output_poses",
+        "target": "record.interface/input/predicted_poses"
+      },
+      {
+        "source": "detection_pose_estimation.object_detection.subgraph/interface/detections",
+        "target": "record.interface/input/predicted_detections"
+      }
+    ]
+  },
+  "config": {
+    "replay.interface": {
+      "output": {
+        "auto_stop_application": false,
+        "report_success": true,
+        "tick_period": "1.0",
+        "use_recorded_message_time": true
+      }
+    },
+    "record.interface": {
+      "input": {
+        "enabled": true
+      }
+    }
+  }
+}

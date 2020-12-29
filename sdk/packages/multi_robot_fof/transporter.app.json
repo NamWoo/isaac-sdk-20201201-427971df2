@@ -1,0 +1,90 @@
+{
+  "name": "transporter",
+  "modules": [
+    "map",
+    "sight"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "simulation",
+        "subgraph": "packages/navsim/apps/navsim_navigation.subgraph.json"
+      },
+      {
+        "name": "navigation",
+        "subgraph": "packages/navigation/apps/differential_base_navigation.subgraph.json"
+      },
+      {
+        "name": "goals",
+        "subgraph": "packages/navigation/apps/goal_generators.subgraph.json"
+      }
+    ],
+    "edges": [
+      {
+        "source": "navigation.subgraph/interface/feedback",
+        "target": "goals.subgraph/interface/feedback"
+      },
+      {
+        "source": "goals.subgraph/interface/goal",
+        "target": "navigation.subgraph/interface/goal"
+      },
+      {
+        "source": "goals.subgraph/interface/goal",
+        "target": "simulation.interface/input/goal"
+      },
+      {
+        "source": "simulation.interface/noisy/flatscan",
+        "target": "navigation.subgraph/interface/flatscan_for_obstacles"
+      },
+      {
+        "source": "simulation.interface/noisy/flatscan_2",
+        "target": "navigation.subgraph/interface/flatscan_2_for_obstacles"
+      },
+      {
+        "source": "simulation.interface/noisy/flatscan",
+        "target": "navigation.subgraph/interface/flatscan_for_localization"
+      },
+      {
+        "source": "simulation.interface/noisy/flatscan_2",
+        "target": "navigation.subgraph/interface/flatscan_2_for_localization"
+      },
+      {
+        "source": "navigation.planner.subgraph/interface/plan",
+        "target": "simulation.interface/input/global_plan"
+      },
+      {
+        "source": "navigation.control.lqr/isaac.lqr.DifferentialBaseLqrPlanner/plan",
+        "target": "simulation.interface/input/local_plan"
+      },
+      {
+        "source": "simulation.interface/output/base_state",
+        "target": "navigation.subgraph/interface/state"
+      },
+      {
+        "source": "simulation.interface/output/imu_raw",
+        "target": "navigation.subgraph/interface/imu_raw"
+      },
+      {
+        "source": "navigation.subgraph/interface/command",
+        "target": "simulation.interface/input/base_command"
+      }
+    ]
+  },
+  "config": {
+    "goals.goal_behavior": {
+      "isaac.navigation.SelectorBehavior": {
+        "desired_behavior": "waypoint",
+        "report_child_status": true
+      }
+    },
+    "navigation.go_to.go_to_behavior": {
+      "disable_automatic_start": true
+    },
+    "navigation.go_to.goal_monitor": {
+      "GoalMonitor": {
+        "arrived_position_thresholds": [0.3, 0.4],
+        "stationary_speed_thresholds": [0.1, 0.2]
+      }
+    }
+  }
+}

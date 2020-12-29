@@ -1,0 +1,66 @@
+{
+  "name": "pymessage_test",
+  "modules": [
+    "message_generators"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "mock",
+        "components": [
+          {
+            "name": "isaac.alice.MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "CameraGenerator",
+            "type": "isaac::message_generators::CameraGenerator"
+          },
+          {
+            "name": "Detections2Generator",
+            "type": "isaac::message_generators::Detections2Generator"
+          }
+        ]
+      },
+      {
+        "name": "node",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "node/ledger/in",
+        "target": "node/ledger/out"
+      }
+    ]
+  },
+  "config": {
+    "mock": {
+      "CameraGenerator": {
+        "rows": 240,
+        "cols": 320,
+        "tick_period": "50ms"
+      },
+      "Detections2Generator": {
+        "detection_configuration": [
+          {
+            "class_label": "A",
+            "confidence": 0.8,
+            "bounding_box_coordinates": [
+              0.0,
+              0.0,
+              100.0,
+              100.0
+            ]
+          }
+        ],
+        "tick_period": "50ms"
+      }
+    }
+  }
+}

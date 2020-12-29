@@ -1,0 +1,43 @@
+# Packages Notices
+
+Packages are optional parts of NVIDIA Isaac SDK. The NVIDIA Isaac SDK application binaries may
+compile in code from additional sources IF you have included and used their respective build files
+and sources. We inventory licenses for non-permissive software source code below for your
+convenience. The license files are part of their respective distribution packages.
+
+## Robotis Dynamixel SDK
+
+The Robotis Dynamixel SDK is under Apache Version 2.0 license.
+
+## OpenSLAM GMapping
+
+The OpenSLAM GMapping software is under BSD license. Not to be confused with the ROS fork of
+GMapping! The OpenSLAM GMapping software is included in the Isaac SDK with authorization of the
+authors. Any commercial application, redistribution, etc has to be arranged between users and
+authors individually and is not covered by OpenSLAM.org.
+
+## LMDB
+
+The LMDB software is under the OpenLDAP Public License Version 2.8, 17 August 2003.
+
+## RealSense
+
+The RealSense software is under Apache Version 2.0 license.
+
+## Base64 Binary
+
+The Base64 Binary software by Daniel Guerrero is under the 2-Clause BSD license.
+
+## Roboto Fonts
+
+The Roboto fonts are under Apache Version 2.0 license.
+
+## GLib
+
+The GLib library is released under the GNU Lesser General Public License (GNU LGPL) 2.1 with
+copyright (C) 1991, 1999 Free Software Foundation, Inc.
+
+## GStreamer
+
+The GStreamer libraries are released under the GNU Library General Public License (GNU LGPL) 2
+with copyright (C) 1991 Free Software Foundation, Inc.

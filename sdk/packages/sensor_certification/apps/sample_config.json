@@ -1,0 +1,32 @@
+{
+    "sensor_name": "SAMPLE",
+    "sw_version": "v0.0.0",
+    "codelet" : "isaac::vendor::sample",
+    "module_name" : "external/com_sensor_driver//packages/sample",
+    "sensor_modes": [
+        {
+            "type": "depth_camera",
+            "sensor_spec": {
+                "color_tx": "color",
+                "depth_tx": "depth",
+                "color_intrinsics_tx": "color_intrinsics",
+                "depth_intrinsics_tx": "depth_intrinsics",
+                "color_focal_length_x": 614.799,
+                "color_focal_length_y": 615.035,
+                "depth_focal_length_x": 617.19,
+                "depth_focal_length_y": 617.19,
+                "color_channels": 3,
+                "fps": 30,
+                "mode": "640x480",
+                "min_depth": 0.5,
+                "max_depth": 3.0
+            },
+            "sensor_drv_config": {
+                "rows": 480,
+                "cols": 640,
+                "depth_framerate": 30,
+                "color_framerate": 30
+            }
+        }
+    ]
+}

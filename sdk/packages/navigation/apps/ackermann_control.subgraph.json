@@ -1,0 +1,271 @@
+{
+  "modules": [
+    "controller",
+    "lqr",
+    "navigation",
+    "planner_cost"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "subgraph",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "interface",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "lqr",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "AckermannLqrPlanner",
+            "type": "isaac::lqr::AckermannLqrPlanner"
+          }
+        ]
+      },
+      {
+        "name": "lqr_control_cost",
+        "components": [
+          {
+            "name": "RangeConstraintsCostBuilder",
+            "type": "isaac::planner_cost::RangeConstraintsCostBuilder"
+          }
+        ]
+      },
+      {
+        "name": "lqr_state_cost",
+        "components": [
+          {
+            "name": "TotalSum",
+            "type": "isaac::planner_cost::AdditionBuilder"
+          },
+          {
+            "name": "LimitRange",
+            "type": "isaac::planner_cost::RangeConstraintsCostBuilder"
+          },
+          {
+            "name": "SmoothMinimumBuilder",
+            "type": "isaac::planner_cost::SmoothMinimumBuilder"
+          },
+          {
+            "name": "CirclesUnionSmoothDistanceBuilder",
+            "type": "isaac::planner_cost::CirclesUnionSmoothDistanceBuilder"
+          },
+          {
+            "name": "ObstacleLocalMap",
+            "type": "isaac::planner_cost::ObstacleDistanceBuilder"
+          },
+          {
+            "name": "ObstacleRestrictedArea",
+            "type": "isaac::planner_cost::ObstacleDistanceBuilder"
+          },
+          {
+            "name": "DistanceQuadraticCostBuilder",
+            "type": "isaac::planner_cost::DistanceQuadraticCostBuilder"
+          },
+          {
+            "name": "PolylineDistanceQuadraticCostBuilder",
+            "type": "isaac::planner_cost::PolylineDistanceQuadraticCostBuilder"
+          },
+          {
+            "name": "BoundedQuadraticCostBuilder",
+            "type": "isaac::planner_cost::BoundedQuadraticCostBuilder"
+          }
+        ]
+      },
+      {
+        "name": "control",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "AckermannControl",
+            "type": "isaac::controller::AckermannControl"
+          }
+        ]
+      },
+      {
+        "name": "stop",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "AckermannControl",
+            "type": "isaac::controller::AckermannControl"
+          }
+        ]
+      },
+      {
+        "name": "navigation_mode",
+        "components": [
+          {
+            "name": "isaac.navigation.GroupSelectorBehavior",
+            "type": "isaac::behavior_tree::deprecated::GroupSelectorBehavior"
+          },
+          {
+            "name": "isaac.alice.Behavior",
+            "type": "isaac::behavior_tree::deprecated::Behavior"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "subgraph/interface/plan",
+        "target": "lqr/AckermannLqrPlanner/global_plan"
+      },
+      {
+        "source": "subgraph/interface/vehicle_state",
+        "target": "lqr/AckermannLqrPlanner/vehicle_state"
+      },
+      {
+        "source": "subgraph/interface/odometry",
+        "target": "lqr/AckermannLqrPlanner/odometry"
+      },
+      {
+        "source": "lqr/AckermannLqrPlanner/plan",
+        "target": "control/AckermannControl/plan"
+      },
+      {
+        "source": "subgraph/interface/odometry",
+        "target": "control/AckermannControl/odometry"
+      },
+      {
+        "source": "control/AckermannControl/command",
+        "target": "subgraph/interface/command"
+      },
+      {
+        "source": "subgraph/interface/odometry",
+        "target": "stop/AckermannControl/odometry"
+      },
+      {
+        "source": "stop/AckermannControl/command",
+        "target": "subgraph/interface/command"
+      }
+    ]
+  },
+  "config": {
+    "navigation_mode": {
+      "isaac.alice.Behavior": {
+        "aliases": [
+          "lqr",
+          "control",
+          "stop"
+        ],
+        "nodes": [
+          "$(fullname lqr)",
+          "$(fullname control)",
+          "$(fullname stop)"
+        ]
+      },
+      "isaac.navigation.GroupSelectorBehavior": {
+        "behavior_map": {
+          "navigate": [
+            "lqr",
+            "control"
+          ],
+          "stop": [
+            "stop"
+          ]
+        },
+        "desired_behavior": "navigate",
+        "tick_period": "50ms"
+      }
+    },
+    "stop": {
+      "AckermannControl": {
+        "force_stop": true,
+        "tick_period": "100Hz"
+      }
+    },
+    "control": {
+      "AckermannControl": {
+        "tick_period": "100Hz",
+        "command_delay": 0.01
+      }
+    },
+    "lqr": {
+      "AckermannLqrPlanner": {
+        "num_controls": 50,
+        "time_between_command": 0.1,
+        "distance_to_waypoint": 7.0,
+        "polyline_distance": 3.0,
+        "angle_polyline": 0.0,
+        "state_planner_cost_name": "$(fullname lqr_state_cost/TotalSum)",
+        "control_planner_cost_name": "$(fullname lqr_control_cost/RangeConstraintsCostBuilder)",
+        "target_cost_name": "$(fullname lqr_state_cost/BoundedQuadraticCostBuilder)",
+        "path_cost_name": "$(fullname lqr_state_cost/PolylineDistanceQuadraticCostBuilder)",
+        "plan_visualization_color": [185, 15, 15],
+        "tick_period": "5Hz"
+      }
+    },
+    "lqr_control_cost": {
+      "RangeConstraintsCostBuilder": {
+        "gains": [10.0, 10.0],
+        "min_value": [0.0, 0.0],
+        "max_value": [0.0, 0.0]
+      }
+    },
+    "lqr_state_cost": {
+      "TotalSum": {
+        "component_names": [
+          "$(fullname lqr_state_cost/DistanceQuadraticCostBuilder)",
+          "$(fullname lqr_state_cost/LimitRange)",
+          "$(fullname lqr_state_cost/BoundedQuadraticCostBuilder)",
+          "$(fullname lqr_state_cost/PolylineDistanceQuadraticCostBuilder)"
+        ]
+      },
+      "SmoothMinimumBuilder": {
+        "component_names": [
+          "$(fullname lqr_state_cost/ObstacleLocalMap)",
+          "$(fullname lqr_state_cost/ObstacleRestrictedArea)"
+        ]
+      },
+      "CirclesUnionSmoothDistanceBuilder": {
+        "component_name": "$(fullname lqr_state_cost/SmoothMinimumBuilder)"
+      },
+      "DistanceQuadraticCostBuilder": {
+        "component_name": "$(fullname lqr_state_cost/CirclesUnionSmoothDistanceBuilder)",
+        "costs": [[1000.0, 0.1, 0.0], [1.0, 0.25, 0.5]]
+      },
+      "ObstacleLocalMap": {
+        "obstacle_name": "local_map"
+      },
+      "ObstacleRestrictedArea": {
+        "obstacle_name": "map/restricted_area"
+      },
+      "LimitRange": {
+        "gains": [0.0, 0.0, 0.0, 1000.0, 1000.0, 1000.0],
+        "min_value": [0.0, 0.0, 0.0, -1.0, -0.50, -2.0],
+        "max_value": [0.0, 0.0, 0.0, 3.0, 0.50, 2.0]
+      },
+      "PolylineDistanceQuadraticCostBuilder": {
+        "gain": 50.0,
+        "speed_reward": 2.0,
+        "minimum_distance_waypoint": 0.1,
+        "min_distance_for_reward": 0.25,
+        "maximum_number_points": 100
+      },
+      "BoundedQuadraticCostBuilder": {
+        "target": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        "scaler": [2.5, 2.5, 2.5, 0.0, 0.0, 0.0],
+        "sigma": 5.0,
+        "maximum": 100.0
+      }
+    }
+  }
+}

@@ -1,0 +1,482 @@
+{
+  "modules": [
+    "atlas",
+    "behavior_tree",
+    "composite",
+    "path_planner",
+    "utils"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Subgraph",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "mission",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "detect_object",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "close_gripper_with_timeout",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "ParallelBehavior",
+            "type": "isaac::behavior_tree::ParallelBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "gripper_timer",
+        "components": [
+          {
+            "name": "TimerBehavior",
+            "type": "isaac::behavior_tree::TimerBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "joint_follow_path",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "CompositePublisher",
+            "type": "isaac::composite::CompositePublisher"
+          },
+          {
+            "name": "CompositeMetric",
+            "type": "isaac::composite::CompositeMetric"
+          },
+          {
+            "name": "FollowPath",
+            "type": "isaac::composite::FollowPath"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "go_to_view_pose",
+        "components": [
+          {
+            "name": "ConfigLoader",
+            "type": "isaac::alice::ConfigLoader"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "perceive_object",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "WaitUntilDetection",
+            "type": "isaac::utils::WaitUntilDetection"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "detections_to_pose_tree",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "DetectionsToPoseTree",
+            "type": "isaac::utils::DetectionsToPoseTree"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "relink_target_pose",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "PyCodelet",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "set_target_poses",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "PoseInitializerPreGrasp",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "PoseInitializerGrasp",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "PoseInitializerLift",
+            "type": "isaac::alice::PoseInitializer"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "pick_object",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "cartesian_planner",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "EndEffectorGlobalPlanner",
+            "type": "isaac::path_planner::EndEffectorGlobalPlanner"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "suction_follow_path",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "CompositePublisher",
+            "type": "isaac::composite::CompositePublisher"
+          },
+          {
+            "name": "CompositeMetric",
+            "type": "isaac::composite::CompositeMetric"
+          },
+          {
+            "name": "FollowPath",
+            "type": "isaac::composite::FollowPath"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "go_to_pregrasp_pose",
+        "components": [
+          {
+            "name": "ConfigLoader",
+            "type": "isaac::alice::ConfigLoader"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "open_gripper_before_grasp",
+        "components": [
+          {
+            "name": "ConfigLoader",
+            "type": "isaac::alice::ConfigLoader"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "go_to_grasp_pose",
+        "components": [
+          {
+            "name": "ConfigLoader",
+            "type": "isaac::alice::ConfigLoader"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "close_gripper_after_grasp",
+        "components": [
+          {
+            "name": "ConfigLoader",
+            "type": "isaac::alice::ConfigLoader"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "go_to_lift_pose",
+        "components": [
+          {
+            "name": "ConfigLoader",
+            "type": "isaac::alice::ConfigLoader"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "time_delay",
+        "components": [
+          {
+            "name": "TimerBehavior",
+            "type": "isaac::behavior_tree::TimerBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      }
+    ],
+    "edges": [
+      {
+        "source": "joint_follow_path/CompositePublisher/path",
+        "target": "joint_follow_path/FollowPath/path"
+      },
+      {
+        "source": "joint_follow_path/FollowPath/goal",
+        "target": "interface/Subgraph/joint_command"
+      },
+      {
+        "source": "interface/Subgraph/joint_state",
+        "target": "joint_follow_path/FollowPath/state"
+      },
+      {
+        "source": "interface/Subgraph/detections",
+        "target": "perceive_object/WaitUntilDetection/detections"
+      },
+      {
+        "source": "cartesian_planner/EndEffectorGlobalPlanner/joint_target",
+        "target": "interface/Subgraph/joint_command"
+      },
+      {
+        "source": "interface/Subgraph/joint_state",
+        "target": "cartesian_planner/EndEffectorGlobalPlanner/joint_state"
+      },
+      {
+        "source": "suction_follow_path/CompositePublisher/path",
+        "target": "suction_follow_path/FollowPath/path"
+      },
+      {
+        "source": "suction_follow_path/FollowPath/goal",
+        "target": "interface/Subgraph/io_command"
+      },
+      {
+        "source": "interface/Subgraph/io_state",
+        "target": "suction_follow_path/FollowPath/state"
+      }
+    ]
+  },
+  "config": {
+    "mission": {
+      "NodeGroup": {
+        "node_names": [
+          "$(fullname detect_object)",
+          "$(fullname pick_object)"
+        ]
+      }
+    },
+    "detect_object": {
+      "NodeGroup": {
+        "node_names": [
+          "$(fullname go_to_view_pose)",
+          "$(fullname joint_follow_path)",
+          "$(fullname perceive_object)",
+          "$(fullname detections_to_pose_tree)",
+          "$(fullname relink_target_pose)",
+          "$(fullname set_target_poses)",
+          "$(fullname open_gripper_before_grasp)",
+          "$(fullname suction_follow_path)"
+        ]
+      }
+    },
+    "set_target_poses": {
+      "PoseInitializerGrasp": {
+        "lhs_frame": "target",
+        "rhs_frame": "target_grasp",
+        "report_success": true
+      },
+      "PoseInitializerPreGrasp": {
+        "lhs_frame": "target_grasp",
+        "rhs_frame": "target_pre_grasp",
+        "report_success": true
+      },
+      "PoseInitializerLift": {
+        "lhs_frame": "target_grasp",
+        "rhs_frame": "target_lift",
+        "report_success": true
+      }
+    },
+    "pick_object": {
+      "NodeGroup": {
+        "node_names": [
+          "$(fullname go_to_pregrasp_pose)",
+          "$(fullname cartesian_planner)",
+          "$(fullname time_delay)",
+          "$(fullname go_to_grasp_pose)",
+          "$(fullname cartesian_planner)",
+          "$(fullname time_delay)",
+          "$(fullname close_gripper_after_grasp)",
+          "$(fullname close_gripper_with_timeout)",
+          "$(fullname time_delay)",
+          "$(fullname go_to_lift_pose)",
+          "$(fullname cartesian_planner)"
+        ]
+      }
+    },
+    "close_gripper_with_timeout": {
+      "NodeGroup": {
+        "node_names": [
+          "$(fullname suction_follow_path)",
+          "$(fullname gripper_timer)"
+        ]
+      },
+      "ParallelBehavior": {
+        "success_threshold": 1
+      }
+    },
+    "gripper_timer": {
+      "TimerBehavior": {
+        "status": "failure",
+        "delay": 1
+      }
+    },
+    "joint_follow_path": {
+      "CompositePublisher": {
+        "tick_period": "30Hz",
+        "atlas": "atlas/CompositeAtlas",
+        "report_success": true
+      },
+      "FollowPath": {
+        "tick_period": "30Hz",
+        "wait_time": 0.5,
+        "tolerance": 0.05
+      }
+    },
+    "cartesian_planner": {
+      "EndEffectorGlobalPlanner": {
+        "tick_period": "10Hz",
+        "report_success": true,
+        "p_tolerance": 0.02,
+        "q_tolerance": 0.03,
+        "use_pose_tree": true
+      }
+    },
+    "suction_follow_path": {
+      "CompositePublisher": {
+        "tick_period": "30Hz",
+        "atlas": "atlas/CompositeAtlas",
+        "report_success": true
+      },
+      "CompositeMetric": {
+        "use_config_schema": true,
+        "schema": {
+          "entity": ["gripper"],
+          "measure": "none"
+        }
+      },
+      "FollowPath": {
+        "tick_period": "30Hz",
+        "wait_time": 0.0,
+        "tolerance": 0.1
+      }
+    },
+    "go_to_pregrasp_pose": {
+      "ConfigLoader": {
+        "config": {
+          "pick_task.cartesian_planner": {
+            "EndEffectorGlobalPlanner": {
+              "target_pose": "target_pre_grasp"
+            }
+          }
+        }
+      }
+    },
+    "go_to_grasp_pose": {
+      "ConfigLoader": {
+        "config": {
+          "pick_task.cartesian_planner": {
+            "EndEffectorGlobalPlanner": {
+              "target_pose": "target_grasp"
+            }
+          }
+        }
+      }
+    },
+    "go_to_lift_pose": {
+      "ConfigLoader": {
+        "config": {
+          "pick_task.cartesian_planner": {
+            "EndEffectorGlobalPlanner": {
+              "target_pose": "target_lift"
+            }
+          }
+        }
+      }
+    },
+    "detections_to_pose_tree": {
+      "DetectionsToPoseTree": {
+        "report_success": true,
+        "detection_frame": "camera",
+        "reference_frame": "world"
+      }
+    },
+    "time_delay": {
+      "TimerBehavior": {
+        "delay": 1.0
+      }
+    }
+  }
+}

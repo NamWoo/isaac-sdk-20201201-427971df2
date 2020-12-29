@@ -1,0 +1,99 @@
+{
+  "graph": {
+    "nodes": [
+      {
+        "name": "flatmap_cost",
+        "start_order": -100,
+        "components": [
+          {
+            "name": "inside_round",
+            "type": "isaac::map::PolylineFlatmapCost"
+          },
+          {
+            "name": "outside_round",
+            "type": "isaac::map::PolylineFlatmapCost"
+          }
+        ]
+      }
+    ]
+  },
+  "config": {
+    "flatmap_cost": {
+      "inside_round": {
+        "polyline": [
+          [8.05, 4.67], [6.95, 5.97], [6.95, 17.37], [7.25, 17.62], [22.55, 17.62],
+          [23.05, 17.07], [23.05, 4.87], [22.85, 4.67], [8.05, 4.67]
+        ],
+        "width": 0.6,
+        "penality_angle": 1.0,
+        "penality_distance": 2.0,
+        "outside_weight": 10.0
+      },
+      "outside_round": {
+        "polyline": [
+          [7.45, 3.17], [23.45, 3.17], [24.45, 4.17], [24.45, 17.77], [23.45, 18.77],
+          [6.45, 18.77], [5.45, 17.77], [5.45, 5.37], [7.45, 3.17]
+        ],
+        "width": 0.6,
+        "penality_angle": 1.0,
+        "penality_distance": 2.0,
+        "outside_weight": 10.0
+      }
+    },
+    "navigation.planner.planner_switch_behavior": {
+      "SwitchBehavior": {
+        "desired_behavior": "$(fullname navigation.planner.pose2_graph_planner)"
+      }
+    },
+    "navigation.control.lqr_state_cost": {
+      "LimitRange": {
+        "min_value": [0.0, 0.0, 0.0, -0.3, -0.5],
+        "max_value": [0.0, 0.0, 0.0, 1.2, 0.5]
+      }
+    },
+    "navigation.planner.pose2_graph_planner": {
+      "Pose2GraphPlanner": {
+        "blocked_edge_timeout": 2.0,
+        "model_max_translation_distance": 2.0,
+        "model_max_rotation_distance": 6.2831853
+      },
+      "Pose2DirectedGraphPlanner": {
+        "blocked_edge_timeout": 2.0
+      }
+    },
+    "navigation.sight_widgets": {
+      "Planner View": {
+        "type": "2d",
+        "channels": [
+          { "name": "$(fullname navigation.local_map.inpainted_egm_viewer/EvidenceGridMapViewer/egm)" },
+          { "name": "$(fullname navigation.go_to.goal_viewer/GoalViewer/goal)" },
+          { "name": "$(fullname navigation.planner.viewers/Plan2Viewer/plan)" },
+          { "name": "$(fullname navigation.localization.viewers/RobotViewer/robot_model)" },
+          { "name": "$(fullname navigation.localization.viewers/PoseTrailViewer/pose_trail)" },
+          { "name": "$(fullname navigation.control.lqr/isaac.lqr.DifferentialBaseLqrPlanner/plan)" },
+          { "name": "$(fullname detections_filter/Detections3Filter/roi_2D)" }
+        ]
+      },
+      "Map View": {
+        "type": "2d",
+        "channels": [
+          { "name": "map/occupancy/map" },
+          { "name": "$(fullname navigation.local_map.inpainted_egm_viewer/EvidenceGridMapViewer/egm)" },
+          { "name": "$(fullname flatmap_cost/outside_round/area)" },
+          { "name": "$(fullname flatmap_cost/outside_round/polyline)" },
+          { "name": "$(fullname flatmap_cost/inside_round/area)" },
+          { "name": "$(fullname flatmap_cost/inside_round/polyline)" },
+          { "name": "$(fullname navigation.localization.viewers/FlatscanViewer/beam_endpoints)" },
+          { "name": "$(fullname navigation.localization.viewers/FlatscanViewer2/beam_endpoints)" },
+          { "name": "$(fullname navigation.go_to.goal_viewer/GoalViewer/goal)" },
+          { "name": "$(fullname navigation.localization.viewers/RobotViewer/robot_model)" },
+          { "name": "$(fullname navigation.localization.viewers/RobotViewer/robot)" },
+          { "name": "$(fullname navigation.planner.viewers/Plan2Viewer/plan)" },
+          { "name": "$(fullname navigation.control.lqr/isaac.lqr.DifferentialBaseLqrPlanner/plan)" },
+          { "name": "map/restricted_area/polygons" },
+          { "name": "map/waypoints/waypoints" }
+        ]
+      }
+    }
+  }
+}

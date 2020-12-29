@@ -1,0 +1,204 @@
+{
+  "name": "navigate",
+  "modules": [
+    "behavior_tree",
+    "map",
+    "message_generators"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "simulation",
+        "subgraph": "packages/navsim/apps/navsim_navigation.subgraph.json"
+      },
+      {
+        "name": "navigation",
+        "subgraph": "packages/navigation/apps/differential_base_navigation.subgraph.json"
+      },
+      {
+        "name": "goals",
+        "subgraph": "packages/navigation/apps/goal_generators.subgraph.json"
+      },
+      {
+        "name": "lqr_speed_check",
+        "components": [
+          {
+            "name": "PolygonDistanceQuadraticCostBuilder",
+            "type": "isaac::planner_cost::PolygonDistanceQuadraticCostBuilder"
+          }
+        ]
+      },
+      {
+        "name": "parameterized_lift",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "DifferentialBaseControlGenerator",
+            "type": "isaac::message_generators::DifferentialBaseControlGenerator"
+          }
+        ]
+      },
+      {
+        "name": "navigate_after_scenario_loads",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "navigation.subgraph/interface/feedback",
+        "target": "goals.subgraph/interface/feedback"
+      },
+      {
+        "source": "goals.subgraph/interface/goal",
+        "target": "navigation.subgraph/interface/goal"
+      },
+      {
+        "source": "simulation.interface/noisy/flatscan",
+        "target": "navigation.subgraph/interface/flatscan_for_localization"
+      },
+      {
+        "source": "simulation.interface/noisy/flatscan_2",
+        "target": "navigation.subgraph/interface/flatscan_2_for_localization"
+      },
+      {
+        "source": "simulation.interface/noisy/flatscan",
+        "target": "navigation.subgraph/interface/flatscan_for_obstacles"
+      },
+      {
+        "source": "simulation.interface/noisy/flatscan_2",
+        "target": "navigation.subgraph/interface/flatscan_2_for_obstacles"
+      },
+      {
+        "source": "simulation.interface/output/base_state",
+        "target": "navigation.subgraph/interface/state"
+      },
+      {
+        "source": "simulation.interface/output/imu_raw",
+        "target": "navigation.subgraph/interface/imu_raw"
+      },
+      {
+        "source": "parameterized_lift/DifferentialBaseControlGenerator/command",
+        "target": "simulation.interface/input/lift_command"
+      },
+      {
+        "source": "navigation.subgraph/interface/command",
+        "target": "simulation.interface/input/base_command"
+      },
+      {
+        "source": "navigation.planner.global_plan_smoother/smoother/smooth_plan",
+        "target": "simulation.interface/sight/global_plan"
+      },
+      {
+        "source": "navigation.control.lqr/isaac.lqr.DifferentialBaseLqrPlanner/plan",
+        "target": "simulation.interface/sight/local_plan"
+      }
+    ]
+  },
+  "config": {
+    "navigation.planner.pose2_graph_planner": {
+      "Pose2DirectedGraphLoader": {
+        "graph_filename": "external/pose2_grid_graphs_factory/pose2_grid_graph_without_dolly.bin"
+      }
+    },
+    "navigation.shared_robot_model": {
+      "SphericalRobotShapeComponent": {
+        "circles": [
+          { "center": [-0.745, 0.0], "radius": 0.315},
+          { "center": [-0.485, 0.0], "radius": 0.315},
+          { "center": [-0.20,  0.0], "radius": 0.315},
+          { "center": [ 0.075, 0.0], "radius": 0.315},
+          { "center": [-0.955,  0.21], "radius": 0.105},
+          { "center": [-0.955, -0.21], "radius": 0.105},
+          { "center": [ 0.285,  0.21], "radius": 0.105},
+          { "center": [ 0.285, -0.21], "radius": 0.105}
+        ]
+      }
+    },
+    "lqr_speed_check": {
+      "PolygonDistanceQuadraticCostBuilder": {
+        "gain": 10000.0,
+        "offset": 0.02,
+        "indices": [3, 4],
+        "polygon": [
+          [0, 0.298], [0.0875, 0.15], [0.2, 0.2], [0.585, 0.2587], [1.25, 0.25], [2.2, 0],
+          [1.25, -0.2], [0.585, -0.2587], [0.2, -0.2], [0.0875, -0.15], [0, -0.298],
+          [-0.0875, -0.15], [-0.2, -0.2], [-0.585, -0.25], [-1, 0], [-0.585, 0.2587],
+          [-0.2, 0.2], [-0.0875, 0.15]
+        ]
+      }
+    },
+    "navigation.control.lqr_state_cost": {
+      "TotalSum": {
+        "component_names": [
+          "$(fullname navigation.control.lqr_state_cost/DistanceQuadraticCostBuilder)",
+          "$(fullname navigation.control.lqr_state_cost/LimitRange)",
+          "$(fullname navigation.control.lqr_state_cost/TargetRange)",
+          "$(fullname lqr_speed_check/PolygonDistanceQuadraticCostBuilder)"
+        ]
+      }
+    },
+    "navigation.control.state_validation": {
+      "CollisionCheck": {
+        "deceleration_limit": 12.5,
+        "distance_threshold": 0.1
+      },
+      "SpeedCheck": {
+        "valid_speed_region": [
+          [0, 0.298], [0.0875, 0.15], [0.2, 0.2], [0.585, 0.2587], [1.25, 0.25], [2.2, 0],
+          [1.25, -0.2], [0.585, -0.2587], [0.2, -0.2], [0.0875, -0.15], [0, -0.298],
+          [-0.0875, -0.15], [-0.2, -0.2], [-0.585, -0.25], [-1, 0], [-0.585, 0.2587],
+          [-0.2, 0.2], [-0.0875, 0.15]
+        ]
+      }
+    },
+    "navigation.control.trajectory_validation": {
+      "CollisionCheck": {
+        "deceleration_limit": 12.5,
+        "distance_threshold": 0.1
+      },
+      "SpeedCheck": {
+        "valid_speed_region": [
+          [0, 0.298], [0.0875, 0.15], [0.2, 0.2], [0.585, 0.2587], [1.25, 0.25], [2.2, 0],
+          [1.25, -0.2], [0.585, -0.2587], [0.2, -0.2], [0.0875, -0.15], [0, -0.298],
+          [-0.0875, -0.15], [-0.2, -0.2], [-0.585, -0.25], [-1, 0], [-0.585, 0.2587],
+          [-0.2, 0.2], [-0.0875, 0.15]
+        ]
+      }
+    },
+    "goals.goal_behavior": {
+      "isaac.navigation.SelectorBehavior": {
+        "desired_behavior": "pose"
+      }
+    },
+    "navigate_after_scenario_loads": {
+      "NodeGroup": {
+        "node_names": [
+          "simulation.scenario_manager",
+          "navigation.localization.localization_behavior"
+        ]
+      }
+    },
+    "navigation.localization.localization_behavior": {
+      "disable_automatic_start": true
+    },
+    "parameterized_lift": {
+      "DifferentialBaseControlGenerator": {
+        "linear_speed": 0.0,
+        "angular_speed": 0.0,
+        "tick_period": "100Hz"
+      }
+    }
+  }
+}

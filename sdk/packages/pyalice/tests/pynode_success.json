@@ -1,0 +1,9 @@
+{
+  "config": {
+    "status": {
+      "dummy": {
+        "status": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+    "modules": [
+        "message_generators",
+        "viewers"
+    ],
+    "graph": {
+        "nodes": [
+            {
+                "name": "subgraph",
+                "components": [
+                    {
+                        "name": "MessageLedger",
+                        "type": "isaac::alice::MessageLedger"
+                    },
+                    {
+                        "name": "interface",
+                        "type": "isaac::alice::Subgraph"
+                    }
+                ]
+            },
+            {
+                "name": "camera_viewer",
+                "components": [
+                    {
+                        "name": "MessageLedger",
+                        "type": "isaac::alice::MessageLedger"
+                    },
+                    {
+                        "name": "ImageViewer",
+                        "type": "isaac::viewers::ImageViewer"
+                    }
+                ]
+            }
+        ],
+        "edges": []
+    },
+    "config": {
+        "camera_viewer": {
+            "ImageViewer": {
+                "target_fps": 11,
+                "camera_name": "bar"
+            }
+        }
+    }
+}

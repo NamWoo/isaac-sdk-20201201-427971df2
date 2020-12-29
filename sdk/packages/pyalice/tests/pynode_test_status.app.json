@@ -1,0 +1,19 @@
+{
+  "name": "pynode_test_status",
+  "modules": [
+    "//packages/pyalice/tests:components"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "status",
+        "components": [
+          {
+            "name": "dummy",
+            "type": "isaac::dummy::DummyStatus"
+          }
+        ]
+      }
+    ]
+  }
+}

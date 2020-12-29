@@ -1,0 +1,115 @@
+// ISAAC SDK Evaluation Pipeline
+//
+// Evaluation pipeline for multiple apps
+// Runs all evaluations and generates a report
+
+//
+// Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
+//
+// NVIDIA CORPORATION and its licensors retain all intellectual property
+// and proprietary rights in and to this software, related documentation
+// and any modifications thereto. Any use, reproduction, disclosure or
+// distribution of this software and related documentation without an express
+// license agreement from NVIDIA CORPORATION is strictly prohibited.
+
+// Call gerrit over SSH and set the verified score of the CL along with a status message
+def set_gerrit_comment( String ref = '', String gerritMessage = "Change not evaluated" ) {
+    if(ref == '') {
+        error("No REF provided, will not create comment on Gerrit")
+    }
+    def refparts = ref.split('/')
+    if(refparts.length != 5
+        || refparts[0] != 'refs'
+        || refparts[1] != 'changes') {
+        println("Provided value does not look like a Gerrit REF")
+        return
+    }
+    def gerrit_change = refparts[3]
+    def gerrit_patchset = refparts[4]
+
+    withCredentials([
+        sshUserPrivateKey(
+            credentialsId: env.CREDENTIALS_ID,
+            keyFileVariable: 'SSH_CREDENTIALS_FILE',
+            usernameVariable: 'SSH_CREDENTIALS_USER'
+        )
+    ]) {
+        sh "ssh -i '$SSH_CREDENTIALS_FILE' \
+        -o StrictHostKeyChecking=no \
+        -p 29418 ${SSH_CREDENTIALS_USER}@${env.GERRIT_SERVER} \
+        gerrit review \
+            --message \\'${gerritMessage}\\' \
+            -n OWNER \
+            ${gerrit_change},${gerrit_patchset}"
+    }
+}
+
+pipeline {
+    agent {
+        node {
+            label 'isaac && gpu'
+        }
+    }
+    parameters {
+        string(
+            name: 'REF',
+            description: "Branch to build. Use a branch name or full REF",
+            defaultValue: 'master'
+        )
+    }
+    environment {
+        GERRIT_SERVER="git-master.nvidia.com"
+        BAZEL_CACHE="http://isaac-sdk-build-01.nvidia.com:8080"
+        DOCKER_ARGUMENTS='-e HOME=/tmp -v /etc/passwd:/etc/passwd:ro --runtime=nvidia'
+        CREDENTIALS_ID="isaac-git-master"
+        NGC_REGISTRY_CREDENTIALS = 'ngc-login'
+    }
+    options {
+        ansiColor('xterm')
+        timestamps()
+        timeout(time: 3, unit: 'HOURS')
+    }
+    stages {
+        stage('Run evaluation') {
+            steps {
+                checkout scm
+                script {
+                    env.GIT_COMMIT_ID = sh(
+                        script: "git rev-parse --short HEAD",
+                        returnStdout: true
+                    ).trim()
+                    env.ARCHIVE_PATH="evaluation-archive/${env.GIT_COMMIT_ID}"
+                    docker.withRegistry('https://nvcr.io',  NGC_REGISTRY_CREDENTIALS) {
+                        def isaac_build_container = docker.build('evaluation-isaacbuild', '-f packages/nvidia_qa/evaluation/Dockerfile engine/build')
+                        isaac_build_container.inside("${DOCKER_ARGUMENTS}") {
+                            dir(HOME) {
+                                dir(WORKSPACE) {
+                                    sh 'python3 packages/nvidia_qa/evaluation/run_evaluation.py'
+                                    sh "mkdir -p evaluation-output"
+                                    sh "rsync --progress --remove-source-files --recursive /tmp/isaac evaluation-output"
+                                    sh 'ls -lR evaluation-output'
+                                }
+                            }
+                        }
+                    }
+                    sh "mkdir -p /mnt/scratch/${env.ARCHIVE_PATH}"
+                    sh "rsync --progress --remove-source-files --recursive evaluation-output/isaac/* /mnt/scratch/${env.ARCHIVE_PATH}"
+                }
+            }
+            post {
+                success {
+                    set_gerrit_comment(params.REF, "Evaluation results have been archived \
+                    ${env.JENKINS_URL}evaluation-archive/compare-results.html?a=${env.GIT_COMMIT_ID}");
+                }
+            }
+        }
+    }
+    post {
+        always{
+            cleanWs()
+        }
+        failure {
+            set_gerrit_comment(params.REF, "Evaluation failed ${RUN_DISPLAY_URL}")
+        }
+    }
+}

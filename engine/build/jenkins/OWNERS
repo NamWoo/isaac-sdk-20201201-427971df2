@@ -1,0 +1,11 @@
+inherited: false
+owners:
+- Heron Guillen
+- Deniz Akyildiz
+- Karsten Patzwaldt
+matchers:
+- suffix: .jenkinsfile
+  owners:
+  - Heron Guillen
+  - Deniz Akyildiz
+  - Karsten Patzwaldt

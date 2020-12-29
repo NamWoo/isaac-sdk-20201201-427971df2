@@ -1,0 +1,250 @@
+{
+  "modules": [
+    "surflets",
+    "sight",
+    "viewers"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Subgraph",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "superpixels",
+        "subgraph": "packages/superpixels/apps/superpixels.subgraph.json"
+      },
+      {
+        "name": "object_pose_refinement",
+        "subgraph": "packages/object_pose_refinement/apps/pose_refinement.subgraph.json"
+      },
+      {
+        "name": "block_detection",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ClusterPoseEstimation",
+            "type": "isaac::alice::PyCodelet"
+          },
+          {
+            "name": "ClusterColorAssignment",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ]
+      },
+      {
+        "name": "clustering",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "EstimateGroundPlane",
+            "type": "isaac::surflets::EstimateGroundPlane"
+          },
+          {
+            "name": "PointCloudClustering",
+            "type": "isaac::surflets::PointCloudClustering"
+          }
+        ]
+      },
+      {
+        "name": "viewers",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Detections3ViewerRaw",
+            "type": "isaac::viewers::Detections3Viewer"
+          },
+          {
+            "name": "Detections3ViewerRefine",
+            "type": "isaac::viewers::Detections3Viewer"
+          },
+          {
+            "name": "ImageViewer",
+            "type": "isaac::viewers::ImageViewer"
+          }
+        ]
+      },
+      {
+        "name": "sight_widgets",
+        "components": [
+          {
+            "type": "isaac::sight::SightWidget",
+            "name": "Pose Estimation"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "interface/Subgraph/color",
+        "target": "superpixels.subgraph/interface/color"
+      },
+      {
+        "source": "interface/Subgraph/depth",
+        "target": "superpixels.subgraph/interface/depth"
+      },
+      {
+        "source": "interface/Subgraph/intrinsics",
+        "target": "superpixels.subgraph/interface/depth_intrinsics"
+      },
+      {
+        "source": "superpixels.subgraph/interface/surflets",
+        "target": "clustering/EstimateGroundPlane/surflets"
+      },
+      {
+        "source": "superpixels.subgraph/interface/surflets",
+        "target": "clustering/PointCloudClustering/surflets"
+      },
+      {
+        "source": "clustering/EstimateGroundPlane/plane_mask",
+        "target": "clustering/PointCloudClustering/plane_mask"
+      },
+      {
+        "source": "superpixels.subgraph/interface/surflets",
+        "target": "block_detection/ClusterPoseEstimation/surflets"
+      },
+      {
+        "source": "clustering/PointCloudClustering/assignment",
+        "target": "block_detection/ClusterPoseEstimation/assignment"
+      },
+      {
+        "source": "clustering/EstimateGroundPlane/plane_model",
+        "target": "block_detection/ClusterPoseEstimation/plane_model"
+      },
+      {
+        "source": "superpixels.subgraph/interface/surflets",
+        "target": "object_pose_refinement.subgraph/interface/measurement_surflets"
+      },
+      {
+        "source": "block_detection/ClusterPoseEstimation/output_assignment",
+        "target": "object_pose_refinement.object_pose_refinement/PoseRefinement/object_assignment"
+      },
+      {
+        "source": "block_detection/ClusterPoseEstimation/output_poses",
+        "target": "object_pose_refinement.subgraph/interface/input_poses"
+      },
+      {
+        "source": "superpixels.subgraph/interface/surflets",
+        "target": "block_detection/ClusterColorAssignment/surflets"
+      },
+      {
+        "source": "block_detection/ClusterPoseEstimation/output_assignment",
+        "target": "block_detection/ClusterColorAssignment/assignment"
+      },
+      {
+        "source": "block_detection/ClusterPoseEstimation/output_poses",
+        "target": "viewers/Detections3ViewerRaw/detections"
+      },
+      {
+        "source": "block_detection/ClusterColorAssignment/output_poses",
+        "target": "viewers/Detections3ViewerRefine/detections"
+      },
+      {
+        "source": "interface/Subgraph/color",
+        "target": "viewers/ImageViewer/image"
+      },
+      {
+        "source": "interface/Subgraph/intrinsics",
+        "target": "viewers/ImageViewer/intrinsics"
+      },
+      {
+        "source": "block_detection/ClusterColorAssignment/output_poses",
+        "target": "interface/Subgraph/output_poses"
+      }
+    ]
+  },
+  "config": {
+    "clustering": {
+      "EstimateGroundPlane": {
+        "distance_threshold": 0.01
+      },
+      "PointCloudClustering": {
+        "min_cluster_size": 20,
+        "max_cluster_size": 200
+      }
+    },
+    "superpixels.rgbd":{
+      "edges": {
+        "max_depth": 0.8
+      }
+    },
+    "viewers": {
+      "Detections3ViewerRaw": {
+        "frame": "camera",
+        "box_dimensions": [0.048, 0.048, 0.048],
+        "detections_color": [150, 150, 150, 255]
+      },
+      "Detections3ViewerRefine": {
+        "frame": "camera",
+        "box_dimensions": [0.048, 0.048, 0.048]
+      },
+      "ImageViewer": {
+        "reduce_scale": 2,
+        "camera_name": "camera"
+      }
+    },
+    "object_pose_refinement.surflet_masking": {
+      "disable_automatic_start": true
+    },
+    "object_pose_refinement.pose_initializers": {
+      "disable_automatic_start": true
+    },
+    "object_pose_refinement.model_atlas": {
+      "object_model": {
+        "cask": "external/block_pose_estimation_data/surflet_block_0.005"
+      }
+    },
+    "object_pose_refinement.object_pose_refinement": {
+      "PoseRefinement": {
+        "mesh_pose_offset": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        "distance_threshold": 1e-7,
+        "line_search_tolerance": 1e-8,
+        "gradient_descent_max_iterations": 45,
+        "line_search_max_iterations": 50
+      }
+    },
+    "object_pose_refinement.surflet_assignment": {
+      "surflet_assignment": {
+        "scale": 0.02
+      }
+    },
+    "sight_widgets": {
+      "Pose Estimation": {
+        "type": "2d",
+        "base_frame": "camera",
+        "static_frame": "camera",
+        "channels": [
+          {
+            "name": "$(fullname viewers/ImageViewer/image)"
+          },
+          {
+            "name": "$(fullname viewers/Detections3ViewerRaw/bounding_box)",
+            "size": 2
+          },
+          {
+            "name": "$(fullname viewers/Detections3ViewerRefine/bounding_box)",
+            "size": 3
+          }
+        ]
+      }
+    }
+  }
+}

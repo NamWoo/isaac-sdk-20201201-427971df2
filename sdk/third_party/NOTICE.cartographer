@@ -1,0 +1,7 @@
+# Cartographer Notice
+
+Cartographer is an optional part of NVIDIA Isaac SDK. The NVIDIA Isaac SDK application binaries may
+compile in code from Cartographer IF you have included and used its respective build files and
+sources.
+
+Cartographer software is under Apache Version 2.0 license.

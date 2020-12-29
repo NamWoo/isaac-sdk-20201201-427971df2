@@ -1,0 +1,75 @@
+{
+    "missions": [
+        {
+            "robot": "carter-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "goals.goal_behavior": {
+                    "isaac.navigation.SelectorBehavior": {
+                        "desired_behavior": "path",
+                        "report_child_status": true
+                    }
+                },
+                "goals.path": {
+                    "Plan2Generator": {
+                        "waypoints": [
+                            [1,19.5,15]
+                        ],
+                        "report_success": true
+                    },
+                    "FollowPath": {
+                        "report_success_on_arrival": true
+                    }
+                }
+            }
+        },
+        {
+            "robot": "carter-01",
+            "channel": "mission",
+            "upstream": [0],
+            "config": {
+                "goals.goal_behavior": {
+                    "isaac.navigation.SelectorBehavior": {
+                        "desired_behavior": "path",
+                        "report_child_status": true
+                    }
+                },
+                "goals.path": {
+                    "Plan2Generator": {
+                        "waypoints": [
+                            [1,17.6,18]
+                        ],
+                        "report_success": true
+                    },
+                    "FollowPath": {
+                        "report_success_on_arrival": true
+                    }
+                }
+            }
+        },
+        {
+            "robot": "carter-01",
+            "channel": "mission",
+            "config": {
+                "goals.goal_behavior": {
+                    "isaac.navigation.SelectorBehavior": {
+                        "desired_behavior": "path",
+                        "report_child_status": true
+                    }
+                },
+                "goals.path": {
+                    "Plan2Generator": {
+                        "waypoints": [
+                            [1,19.5,15]
+                        ],
+                        "report_success": true
+                    },
+                    "FollowPath": {
+                        "report_success_on_arrival": true
+                    }
+                }
+            }
+        }
+    ]
+}

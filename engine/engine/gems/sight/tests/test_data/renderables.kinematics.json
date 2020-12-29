@@ -1,0 +1,27 @@
+{
+  "frame_0": {
+    "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "renderables": {
+      "cube_renderable": {
+        "type": "cube",
+        "center": [0.0, 0.0, 0.0],
+        "dimensions": [1.0, 1.0, 1.0]
+      }
+    }
+  },
+  "frame_1": {
+    "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "renderables": {
+      "cube_renderable": {
+        "type": "cube"
+      }
+    }
+  },
+  "frame_2": {
+    "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "renderables": {}
+  },
+  "frame_3": {
+    "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  }
+}

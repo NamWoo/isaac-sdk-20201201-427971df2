@@ -1,0 +1,92 @@
+{
+  "name": "ros_to_superpixels",
+  "modules": [
+    "sight"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "ros_to_perception",
+        "subgraph": "packages/ros_bridge/apps/ros_to_perception.subgraph.json"
+      },
+      {
+        "name": "superpixels",
+        "subgraph": "packages/superpixels/apps/superpixels.subgraph.json"
+      }
+    ],
+    "edges": [
+      {
+        "source": "ros_to_perception.subgraph/interface/color",
+        "target": "superpixels.subgraph/interface/color"
+      },
+      {
+        "source": "ros_to_perception.subgraph/interface/depth_intrinsics",
+        "target": "superpixels.subgraph/interface/depth_intrinsics"
+      },
+      {
+        "source": "ros_to_perception.subgraph/interface/depth",
+        "target": "superpixels.subgraph/interface/depth"
+      }
+    ]
+  },
+  "config": {
+    "ros_to_perception.ros_converters": {
+      "RosToDepth": {
+        "channel_name": "/camera/depth/image_rect_raw"
+      },
+      "RosToCameraIntrinsics": {
+        "channel_name": "/camera/color/camera_info"
+      },
+      "RosToImage": {
+        "channel_name": "/camera/color/image_raw"
+      }
+    },
+    "websight": {
+      "WebsightServer": {
+        "port": 3000,
+        "ui_config": {
+          "windows": {
+            "color": {
+              "renderer": "2d",
+              "dims": { "width": 640, "height": 480 },
+              "channels": [
+                { "name": "ros_to_superpixels/superpixels.camera_viewer/viewer/image" },
+                { "name": "ros_to_superpixels/superpixels.superpixels/superpixels/superpixel_color" }
+              ]
+            },
+            "depth": {
+              "renderer": "2d",
+              "dims": { "width": 640, "height": 480 },
+              "channels": [
+                { "name": "ros_to_superpixels/superpixels.rgbd/points/depth" },
+                { "name": "ros_to_superpixels/superpixels.rgbd/points/points" },
+                { "name": "ros_to_superpixels/superpixels.superpixels/superpixels/superpixel_indices" }
+              ]
+            },
+            "normals": {
+              "renderer": "2d",
+              "dims": { "width": 640, "height": 480 },
+              "channels": [
+                { "name": "ros_to_superpixels/superpixels.rgbd/normals/normals" },
+                { "name": "ros_to_superpixels/superpixels.rgbd/edges/edges" },
+                { "name": "ros_to_superpixels/superpixels.superpixels/superpixels/superpixel_normals" }
+              ]
+            },
+            "affinity": {
+              "renderer": "2d",
+              "dims": { "width": 640, "height": 480 },
+              "channels": [
+                { "name": "ros_to_superpixels/superpixels.superpixels/superpixels/affinity0" },
+                { "name": "ros_to_superpixels/superpixels.superpixels/superpixels/affinity1" },
+                { "name": "ros_to_superpixels/superpixels.superpixels/superpixels/affinity2" },
+                { "name": "ros_to_superpixels/superpixels.superpixels/superpixels/affinity3" },
+                { "name": "ros_to_superpixels/superpixels.superpixels/superpixels/affinity_weight" },
+                { "name": "ros_to_superpixels/superpixels.superpixels/superpixels/affinity_index" }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

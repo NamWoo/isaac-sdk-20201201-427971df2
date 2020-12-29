@@ -1,0 +1,116 @@
+{
+  "name": "opencv_unity3d",
+  "modules": [
+    "sight",
+    "viewers",
+    "//apps/tutorials/opencv_edge_detection:edge_detector"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "simulation",
+        "subgraph": "packages/navsim/apps/navsim_navigation.subgraph.json"
+      },
+      {
+        "name": "edge_detector",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "EdgeDetector",
+            "type": "isaac::opencv::EdgeDetector"
+          }
+        ]
+      },
+      {
+        "name": "edge_camera_viewer",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ImageViewer",
+            "type": "isaac::viewers::ImageViewer"
+          }
+        ]
+      },
+      {
+        "name": "camera_viewer",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ImageViewer",
+            "type": "isaac::viewers::ImageViewer"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "simulation.interface/output/color",
+        "target": "edge_detector/EdgeDetector/input_image"
+      },
+      {
+        "source": "edge_detector/EdgeDetector/output_image",
+        "target": "edge_camera_viewer/ImageViewer/image"
+      },
+      {
+        "source": "simulation.interface/output/color",
+        "target": "camera_viewer/ImageViewer/image"
+      }
+    ]
+  },
+  "config": {
+    "edge_camera_viewer": {
+      "ImageViewer": {
+        "target_fps": 20,
+        "reduce_scale": 4
+      }
+    },
+    "camera_viewer": {
+      "ImageViewer": {
+        "target_fps": 20,
+        "reduce_scale": 4
+      }
+    },
+    "websight": {
+      "WebsightServer": {
+        "port": 3000,
+        "ui_config": {
+          "windows": {
+            "Edge Detection": {
+              "renderer": "2d",
+              "dims": {
+                "width": 640,
+                "height": 480
+              },
+              "channels": [
+                {
+                  "name": "opencv_unity3d/edge_camera_viewer/ImageViewer/image"
+                }
+              ]
+            },
+            "Color Camera": {
+              "renderer": "2d",
+              "dims": {
+                "width": 640,
+                "height": 480
+              },
+              "channels": [
+                {
+                  "name": "opencv_unity3d/camera_viewer/ImageViewer/image"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

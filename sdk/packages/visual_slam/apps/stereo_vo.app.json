@@ -1,0 +1,80 @@
+{
+  "name": "stereo_vo",
+  "modules": [
+    "sight",
+    "visual_slam",
+    "zed"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "svo",
+        "subgraph": "packages/visual_slam/apps/stereo_visual_odometry_grayscale.subgraph.json"
+      },
+      {
+        "name": "zed",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ZedCamera",
+            "type": "isaac::ZedCamera"
+          },
+          {
+            "name": "ZedImuReader",
+            "type": "isaac::zed::ZedImuReader"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "zed/ZedCamera/left_camera_gray",
+        "target": "svo.subgraph/interface/left_image"
+      },
+      {
+        "source": "zed/ZedCamera/left_intrinsics",
+        "target": "svo.subgraph/interface/left_intrinsics"
+      },
+      {
+        "source": "zed/ZedCamera/right_camera_gray",
+        "target": "svo.subgraph/interface/right_image"
+      },
+      {
+        "source": "zed/ZedCamera/right_intrinsics",
+        "target": "svo.subgraph/interface/right_intrinsics"
+      },
+      {
+        "source": "zed/ZedImuReader/imu_raw",
+        "target": "svo.subgraph/interface/imu"
+      }
+    ]
+  },
+  "config": {
+    "zed": {
+      "ZedCamera": {
+        "resolution": "672x376",
+        "gray_scale": true,
+        "rgb": false,
+        "enable_factory_rectification": true,
+        "enable_imu": true,
+        "camera_fps": 60,
+        "vendor_imu_calibration": false
+      },
+      "ZedImuReader": {
+        "tick_period": "300Hz"
+      }
+    },
+    "svo.tracker": {
+      "StereoVisualOdometry": {
+        "horizontal_stereo_camera": true,
+        "process_imu_readings": true,
+        "lhs_camera_frame": "zed_left_camera",
+        "rhs_camera_frame": "zed_right_camera",
+        "imu_frame": "zed_imu"
+      }
+    }
+  }
+}

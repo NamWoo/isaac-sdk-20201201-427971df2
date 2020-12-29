@@ -1,0 +1,240 @@
+{
+  "modules": [
+    "atlas",
+    "flatsim",
+    "map",
+    "message_generators",
+    "navigation"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "map",
+        "start_order": -100,
+        "components": [
+          {
+            "name": "isaac.map.Map",
+            "type": "isaac::map::Map"
+          },
+          {
+            "name": "map",
+            "type": "isaac::navigation::NavigationMap"
+          },
+          {
+            "name": "occupancy",
+            "type": "isaac::map::OccupancyGridMapLayer"
+          },
+          {
+            "name": "waypoints",
+            "type": "isaac::map::WaypointMapLayer"
+          },
+          {
+            "name": "restricted_area",
+            "type": "isaac::map::PolygonMapLayer"
+          }
+        ]
+      },
+      {
+        "name": "sim_range_scan",
+        "components": [
+          {
+            "name": "robot_gt_T_lidar_gt",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "robot_T_lidar",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "isaac.atlas.PublishMapRoi",
+            "type": "isaac::atlas::PublishMapRoi"
+          },
+          {
+            "name": "isaac.flatsim.TraceOccupancyMap",
+            "type": "isaac::flatsim::TraceOccupancyMap"
+          },
+          {
+            "name": "isaac.message_generators.LatticeGenerator",
+            "type": "isaac::message_generators::LatticeGenerator"
+          },
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "flatscan_noiser",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Random",
+            "type": "isaac::alice::Random"
+          },
+          {
+            "name": "FlatscanNoiser",
+            "type": "isaac::flatsim::FlatscanNoiser"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "flatscan_noiser/FlatscanNoiser/noisy_flatscan",
+        "target": "flatsim.navigation.subgraph/interface/flatscan_2_for_obstacles"
+      },
+      {
+        "source": "flatsim.simulation.subgraph/interface/world_T_robot_gt",
+        "target": "sim_range_scan/isaac.atlas.PublishMapRoi/world_T_robot_gt"
+      },
+      {
+        "source": "sim_range_scan/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "sim_range_scan/isaac.atlas.PublishMapRoi/map_lattice"
+      },
+      {
+        "source": "sim_range_scan/isaac.atlas.PublishMapRoi/roi",
+        "target": "sim_range_scan/isaac.flatsim.TraceOccupancyMap/occupancy_map"
+      },
+      {
+        "source": "sim_range_scan/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "sim_range_scan/isaac.flatsim.TraceOccupancyMap/occupancy_map_lattice"
+      },
+      {
+        "source": "sim_range_scan/isaac.flatsim.TraceOccupancyMap/flatscan",
+        "target": "flatscan_noiser/FlatscanNoiser/flatscan"
+      },
+      {
+        "source": "flatscan_noiser/FlatscanNoiser/noisy_flatscan",
+        "target": "flatsim.navigation.subgraph/interface/flatscan_2_for_localization"
+      }
+    ]
+  },
+  "config": {
+    "flatsim.navigation.shared_robot_model": {
+      "SphericalRobotShapeComponent": {
+        "circles": [
+          { "center": [-0.17 ,0.0], "radius": 0.31},
+          { "center": [-0.43 ,0.0], "radius": 0.31},
+          { "center": [ 0.1 , 0.0], "radius": 0.31},
+          { "center": [-0.7 , 0.0], "radius": 0.31},
+          { "center": [ 0.31, 0.21], "radius": 0.105},
+          { "center": [-0.91,-0.21], "radius": 0.105},
+          { "center": [-0.91, 0.21], "radius": 0.105},
+          { "center": [ 0.31,-0.21], "radius": 0.105}
+        ]
+      }
+    },
+    "flatsim.navigation.local_map.evidence_map_postprocessing": {
+      "isaac.egm_fusion.EvidenceToBinaryMap": {
+        "is_optimistic": true
+      },
+      "isaac.egm_fusion.EvidenceMapInpaint": {
+        "rectangles": [[[-1.015, 0.415],[-0.315, 0.315]]]
+      }
+    },
+    "flatsim.navigation.localization.viewers": {
+      "FlatscanViewer2": {
+        "flatscan_frame": "lidar_back"
+      }
+    },
+    "flatsim.navigation.localization.scan_localization": {
+      "ParticleFilterLocalization": {
+        "flatscan_2_frame": "lidar_back"
+      }
+    },
+    "flatsim.navigation.control.lqr_state_cost": {
+      "LimitRange": {
+        "min_value": [0.0, 0.0, 0.0, -0.1, -0.25],
+        "max_value": [0.0, 0.0, 0.0, 0.65, 0.25]
+      }
+    },
+    "flatsim.navigation.control.lqr": {
+      "isaac.lqr.DifferentialBaseLqrPlanner": {
+        "min_speed": -0.10,
+        "max_speed": 0.65,
+        "use_predicted_position": true,
+        "reset_robot_position": 10,
+        "distance_to_waypoint": 0.25,
+        "angle_to_waypoint": 0.0872665,
+        "max_predicted_position_error": 0.5
+      }
+    },
+    "flatsim.simulation.sim_range_scan": {
+      "isaac.flatsim.TraceOccupancyMap": {
+        "num_beams": 360,
+        "max_range": 40.0,
+        "min_angle": -1.5708,
+        "max_angle": 1.5708
+      },
+      "robot_T_lidar": {
+        "pose": [1.0, 0.0, 0.0, 0.0, 0.32, 0.15, 0.17]
+      },
+      "robot_gt_T_lidar_gt": {
+        "pose": [1.0, 0.0, 0.0, 0.0, 0.32, 0.15, 0.17]
+      }
+    },
+    "flatsim.navigation.local_map.range_scan_2_to_evidence_map": {
+      "isaac.egm_fusion.RangeScanToEvidenceMap": {
+        "sensor_frame": "lidar_back"
+      }
+    },
+    "flatsim.navigation.local_map.range_scan_lattice_2": {
+      "isaac.message_generators.LatticeGenerator": {
+        "reference_frame_name": "lidar_back",
+        "lattice_frame_name": "lidar_back_lat"
+      }
+    },
+    "flatsim.navigation.range_scan_robot_removal_2": {
+      "RangeScanRobotRemoval": {
+        "sensor_frame": "lidar_back"
+      }
+    },
+    "sim_range_scan": {
+      "isaac.message_generators.LatticeGenerator": {
+        "relative_offset": [-0.25, -0.5],
+        "dimensions": [256, 256],
+        "cell_size": 0.1,
+        "lattice_frame_name": "lidar_back_gt_lattice",
+        "reference_frame_name": "lidar_back_gt",
+        "tick_period": "100Hz"
+      },
+      "isaac.flatsim.TraceOccupancyMap": {
+        "num_beams": 360,
+        "max_range": 40.0,
+        "min_angle": -1.5708,
+        "max_angle": 1.5708,
+        "lidar_frame": "lidar_back_gt"
+      },
+      "robot_T_lidar": {
+        "lhs_frame": "robot",
+        "rhs_frame": "lidar_back",
+        "pose": [0.0, 0.0, 0.0, 1.0, -1.0, -0.15, 0.17]
+      },
+      "robot_gt_T_lidar_gt": {
+        "lhs_frame": "robot_gt",
+        "rhs_frame": "lidar_back_gt",
+        "pose": [0.0, 0.0, 0.0, 1.0, -1.0, -0.15, 0.17]
+      }
+    },
+    "map": {
+      "occupancy": {
+        "cell_size": 0.03,
+        "filename": "apps/assets/maps/corridor_office.png"
+      },
+      "waypoints": {
+        "tick_period": "1.0"
+      },
+      "restricted_area": {
+        "tick_period": "1.0"
+      }
+    },
+    "websight": {
+      "WebsightServer": {
+        "port": 3000
+      }
+    }
+  }
+}

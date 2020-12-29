@@ -1,0 +1,226 @@
+{
+  "modules": [
+    "ml",
+    "object_pose_estimation",
+    "perception",
+    "viewers",
+    "sight"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "subgraph",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "crop_downsample",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "CropAndDownsampleCuda",
+            "type": "isaac::perception::CropAndDownsampleCuda"
+          }
+        ]
+      },
+      {
+        "name": "encoder",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ColorCameraEncoderCuda",
+            "type": "isaac::ml::ColorCameraEncoderCuda"
+          }
+        ]
+      },
+      {
+        "name": "inference",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "TensorRTInference",
+            "type": "isaac::ml::TensorRTInference"
+          }
+        ]
+      },
+      {
+        "name": "decoder",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "DopeDecoder",
+            "type": "isaac::object_pose_estimation::DopeDecoder"
+          }
+        ]
+      },
+      {
+        "name": "viewers",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Detections3Viewer",
+            "type": "isaac::viewers::Detections3Viewer"
+          },
+          {
+            "name": "TensorViewer",
+            "type": "isaac::viewers::TensorViewer"
+          },
+          {
+            "name": "ImageViewer",
+            "type": "isaac::viewers::ImageViewer"
+          }
+        ]
+      },
+      {
+        "name": "sight_widgets",
+        "components": [
+          {
+            "name": "Pose Estimation",
+            "type": "isaac::sight::SightWidget"
+          },
+          {
+            "name": "Belief Map and Affinity Tensors",
+            "type": "isaac::sight::SightWidget"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "interface/subgraph/color",
+        "target": "crop_downsample/CropAndDownsampleCuda/input_image"
+      },
+      {
+        "source": "interface/subgraph/intrinsics",
+        "target": "crop_downsample/CropAndDownsampleCuda/input_intrinsics"
+      },
+      {
+        "source": "crop_downsample/CropAndDownsampleCuda/output_image",
+        "target": "encoder/ColorCameraEncoderCuda/rgb_image"
+      },
+      {
+        "source": "encoder/ColorCameraEncoderCuda/tensor",
+        "target": "inference/TensorRTInference/input"
+      },
+      {
+        "source": "inference/TensorRTInference/output",
+        "target": "decoder/DopeDecoder/maps"
+      },
+      {
+        "source": "crop_downsample/CropAndDownsampleCuda/output_intrinsics",
+        "target": "decoder/DopeDecoder/intrinsics"
+      },
+      {
+        "source": "decoder/DopeDecoder/output_poses",
+        "target": "viewers/Detections3Viewer/detections"
+      },
+      {
+        "source": "inference/TensorRTInference/output",
+        "target": "viewers/TensorViewer/tensor"
+      },
+      {
+        "source": "crop_downsample/CropAndDownsampleCuda/output_image",
+        "target": "viewers/ImageViewer/image"
+      },
+      {
+        "source": "crop_downsample/CropAndDownsampleCuda/output_intrinsics",
+        "target": "viewers/ImageViewer/intrinsics"
+      },
+      {
+        "source": "decoder/DopeDecoder/output_poses",
+        "target": "interface/subgraph/output_poses"
+      }
+    ]
+  },
+  "config": {
+    "crop_downsample": {
+      "CropAndDownsampleCuda": {
+        "downsample_size": [360, 640]
+      }
+    },
+    "encoder": {
+      "ColorCameraEncoderCuda": {
+        "tensor_index_order": "201",
+        "pixel_normalization_mode": "PositiveNegative",
+        "rows": 360,
+        "cols": 640
+      }
+    },
+    "inference": {
+      "TensorRTInference": {
+        "model_file_path": "external/dope_ycb_data/sugar_60.onnx",
+        "engine_file_path": "/tmp/sugar_60.plan",
+        "input_tensor_info": [
+          {
+            "operation_name": "input",
+            "channel": "input",
+            "dims": [3, 360, 640]
+          }
+        ],
+        "output_tensor_info": [
+          {
+            "operation_name": "output",
+            "channel": "output",
+            "dims": [25, 45, 80]
+          }
+        ]
+      }
+    },
+    "decoder": {
+      "DopeDecoder": {
+        "box_dimensions": [0.092677, 0.176253, 0.045134],
+        "label": "sugar"
+      }
+    },
+    "viewers": {
+      "Detections3Viewer": {
+        "box": [0.092677, 0.176253, 0.045134],
+        "frame": "camera"
+      },
+      "TensorViewer": {
+        "tile_columns": 5
+      },
+      "ImageViewer": {
+        "camera_name": "camera"
+      }
+    },
+    "sight_widgets": {
+      "Pose Estimation": {
+        "type": "2d",
+        "channels":  [
+          { "name": "$(fullname viewers/ImageViewer/image)" },
+          { "name": "$(fullname viewers/Detections3Viewer/bounding_box)" }
+        ]
+      },
+      "Belief Map and Affinity Tensors": {
+        "type": "2d",
+        "channels": [
+          {"name": "$(fullname viewers/TensorViewer/tensor)"}
+        ]
+      }
+    }
+  }
+}

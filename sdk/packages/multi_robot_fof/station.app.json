@@ -1,0 +1,304 @@
+{
+  "name": "station",
+  "modules": [
+    "behavior_tree",
+    "composite",
+    "json",
+    "sight"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "atlas",
+        "components": [
+          {
+            "name": "CompositeAtlas",
+            "type": "isaac::composite::CompositeAtlas"
+          }
+        ]
+      },
+      {
+        "name": "simulation",
+        "subgraph": "packages/navsim/apps/navsim_tcp.subgraph.json"
+      },
+      {
+        "name": "controller",
+        "subgraph": "packages/planner/apps/multi_joint_lqr_control.subgraph.json"
+      },
+      {
+        "name": "perception",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "RigidBodiesToDetections",
+            "type": "isaac::utils::RigidBodiesToDetections"
+          }
+        ]
+      },
+      {
+        "name": "main_sequence",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "mission_feeder",
+        "components": [
+          {
+            "name": "PyCodelet",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "mission_entry",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySelectorBehavior",
+            "type": "isaac::behavior_tree::MemorySelectorBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "task_repeater",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "RepeatBehavior",
+            "type": "isaac::behavior_tree::RepeatBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "task_sequence",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "task_remain_checker",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "PyCodelet",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "pick_and_place_behavior",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "task_remover",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "PyCodelet",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "done_behavior",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "mission_done_checker",
+        "components": [
+          {
+            "name": "PyCodelet",
+            "type": "isaac::alice::PyCodelet"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "pick_task",
+        "subgraph": "apps/samples/pick_and_place/pick_task.json"
+      },
+      {
+        "name": "place_task",
+        "subgraph": "apps/samples/pick_and_place/place_task.json"
+      },
+      {
+        "name": "pose_initializer",
+        "start_order": -100,
+        "components": [
+          {
+            "name": "PoseInitializerCamera",
+            "type": "isaac::alice::PoseInitializer"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "simulation.interface/output/joint_state",
+        "target": "controller.subgraph/interface/joint_state"
+      },
+      {
+        "source": "controller.subgraph/interface/joint_command",
+        "target": "simulation.interface/input/joint_position"
+      },
+      {
+        "source": "simulation.interface/output/joint_state",
+        "target": "pick_task.interface/Subgraph/joint_state"
+      },
+      {
+        "source": "pick_task.interface/Subgraph/joint_command",
+        "target": "controller.subgraph/interface/joint_target"
+      },
+      {
+        "source": "simulation.interface/output/io_state",
+        "target": "pick_task.interface/Subgraph/io_state"
+      },
+      {
+        "source": "pick_task.interface/Subgraph/io_command",
+        "target": "simulation.interface/input/io_command"
+      },
+      {
+        "source": "simulation.interface/output/joint_state",
+        "target": "place_task.interface/Subgraph/joint_state"
+      },
+      {
+        "source": "place_task.interface/Subgraph/joint_command",
+        "target": "controller.subgraph/interface/joint_target"
+      },
+      {
+        "source": "simulation.interface/output/io_state",
+        "target": "place_task.interface/Subgraph/io_state"
+      },
+      {
+        "source": "place_task.interface/Subgraph/io_command",
+        "target": "simulation.interface/input/io_command"
+      },
+      {
+        "source": "simulation.interface/output/bodies",
+        "target": "perception/RigidBodiesToDetections/bodies"
+      },
+      {
+        "source": "perception/RigidBodiesToDetections/detections",
+        "target": "pick_task.perceive_object/WaitUntilDetection/detections"
+      },
+      {
+        "source": "perception/RigidBodiesToDetections/detections",
+        "target": "pick_task.detections_to_pose_tree/DetectionsToPoseTree/detections"
+      }
+    ]
+  },
+  "config": {
+    "main_sequence": {
+      "NodeGroup": {
+        "node_names": [
+          "mission_feeder",
+          "mission_entry"
+        ]
+      }
+    },
+    "mission_entry": {
+      "NodeGroup": {
+        "node_names": [
+          "task_repeater",
+          "done_behavior"
+        ]
+      }
+    },
+    "done_behavior": {
+      "NodeGroup": {
+        "node_names": [
+          "pick_task.open_gripper_before_grasp",
+          "pick_task.suction_follow_path",
+          "mission_done_checker"
+        ]
+      }
+    },
+    "task_repeater": {
+      "NodeGroup": {
+        "node_names": [
+          "task_sequence"
+        ]
+      }
+    },
+    "task_sequence": {
+      "NodeGroup": {
+        "node_names": [
+          "task_remain_checker",
+          "pick_and_place_behavior",
+          "task_remover"
+        ]
+      }
+    },
+    "pick_and_place_behavior": {
+      "NodeGroup": {
+        "node_names": [
+          "pick_task.mission",
+          "place_task.mission"
+        ]
+      }
+    },
+    "pose_initializer": {
+      "PoseInitializerCamera": {
+        "rhs_frame": "camera",
+        "report_success": true
+      }
+    }
+  }
+}

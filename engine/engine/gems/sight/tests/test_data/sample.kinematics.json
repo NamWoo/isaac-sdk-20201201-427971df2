@@ -1,0 +1,44 @@
+{
+  "first_link": {
+    "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 40.0],
+    "renderables": {
+      "cube_renderable": {
+        "type": "cube",
+        "center": [0.0, 0.0, 0.0],
+        "dimensions": [0.6, 0.6, 10.0],
+        "color": [255, 255, 255, 128],
+        "fill_mode": "wireframe",
+        "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -5.0]
+      },
+      "sphere_renderable": {
+        "type": "sphere",
+        "center": [0.0, 0.0, 0.0],
+        "radius": 1.0,
+        "color": [255, 255, 255],
+        "fill_mode": "wireframe",
+        "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -10.0]
+      }
+    }
+  },
+  "second_link": {
+    "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 30.0],
+    "renderables": {
+      "cube_renderable": {
+        "type": "cube",
+        "center": [0.0, 0.0, 0.0],
+        "dimensions": [0.6, 0.6, 20.0],
+        "color": [255, 255, 255],
+        "fill_mode": "filled",
+        "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -10.0]
+      },
+      "sphere_renderable": {
+        "type": "sphere",
+        "center": [0.0, 0.0, 0.0],
+        "radius": 1.0,
+        "color": [255, 255, 255],
+        "fill_mode": "filled",
+        "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -20.0]
+      }
+    }
+  }
+}

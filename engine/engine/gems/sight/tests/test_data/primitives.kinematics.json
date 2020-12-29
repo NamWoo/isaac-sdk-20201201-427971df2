@@ -1,0 +1,44 @@
+{
+  "frame_0": {
+    "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "renderables": {
+      "renderable_0": {
+        "type": "cube",
+        "center": [0.0, 0.0, 0.0],
+        "dimensions": [1.0, 1.0, 1.0]
+      },
+      "renderable_1": {
+        "type": "line_segment",
+        "point_1": [0.0, 0.0, 0.0],
+        "point_2": [1.0, 1.0, 1.0]
+      },
+      "renderable_2": {
+        "type": "sphere",
+        "center": [0.0, 0.0, 0.0],
+        "radius": 20.0
+      },
+      "renderable_3": {
+        "type": "asset",
+        "name": "my_asset"
+      },
+      "renderable_4": {
+        "type": "cube",
+        "center": [0.0, 0.0, 0.0]
+      },
+      "renderable_5": {
+        "center": [0.0, 0.0, 0.0],
+        "dimensions": [1.0, 1.0, 1.0]
+      },
+      "renderable_6": {
+        "type": "icosahedron",
+        "center": [0.0, 0.0, 0.0],
+        "dimensions": [1.0, 1.0, 1.0]
+      },
+      "renderable_7": {
+        "type": "sphere",
+        "center": [0.0, 0.0, 0.0],
+        "radius": [20.0]
+      }
+    }
+  }
+}

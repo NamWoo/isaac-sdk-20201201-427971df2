@@ -1,0 +1,68 @@
+tensorflow-gpu==1.15.0
+pycapnp==0.6.4
+keras==2.3.1
+Pillow==7.2.0
+psutil==5.7.2
+scipy==1.5.2
+graphviz==0.14.1
+nltk==3.5
+onnx==1.6.0
+onnxmltools==1.7.0
+tf2onnx==1.7.2
+
+# Deps for creating pip packages
+wheel
+setuptools
+
+# Deps for voice command training app
+h5py==2.10.0
+librosa==0.8.0
+numpy==1.19.1
+scikit-learn==0.23.2
+SoundFile==0.10.3.post1
+tqdm==4.48.2
+
+# Deps for object detection evaluation
+matplotlib==3.3.1
+pandas==1.1.2
+seaborn==0.11.0
+
+# Deps for object pose estimation training
+opencv-python==4.1.2.30
+tensorflow-graphics-gpu==1.0.0
+lazy-property==0.0.1
+
+# Sphinx for document generation
+Sphinx==3.2.1
+alabaster==0.7.12
+Babel==2.8.0
+imagesize==1.2.0
+Jinja2==2.11.2
+sphinx-rtd-theme==0.5.0
+
+# PyTorch
+torch==1.6.0
+torchvision==0.7.0
+
+# Dependencies for engine
+tabulate==0.8.7
+numpy-quaternion==2020.9.5.14.42.2
+
+# Jupyter Notebook
+jupyterlab==2.2.7
+
+# Dependency for engine/pyalice/gui/composite_widget.py
+ipywidgets==7.5.1
+
+# Dependencies for evaluation on datasets
+dvc==1.6.6
+mlflow==1.11.0
+papermill==2.1.3
+
+# Dependencies for RACI packages
+python-dateutil==2.8.1
+python-swiftclient==3.10.0
+pytz==2020.1
+PyYAML==5.3.1
+paramiko==2.0.0
+scp==0.10.2

@@ -1,0 +1,37 @@
+{
+  "frame_0": {
+    "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "renderables": {
+      "cube_renderable": {
+        "type": "cube",
+        "pose": [0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0],
+        "center": [0.0, 0.0, 0.0],
+        "dimensions": [1.0, 1.0, 1.0]
+      }
+    }
+  },
+  "frame_1": {
+    "frame_id": "my_frame",
+    "renderables": {
+      "cube_renderable": {
+        "type": "cube",
+        "pose": [0.5, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0],
+        "center": [0.0, 0.0, 0.0],
+        "dimensions": [1.0, 1.0, 1.0]
+      }
+    }
+  },
+  "frame_2": {
+    "frame_id": "my_frame",
+    "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    "renderables": {
+      "cube_renderable": {
+        "frame_id": "my_other_frame",
+        "pose": [0.5, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0],
+        "type": "cube",
+        "center": [0.0, 0.0, 0.0],
+        "dimensions": [1.0, 1.0, 1.0]
+      }
+    }
+  }
+}

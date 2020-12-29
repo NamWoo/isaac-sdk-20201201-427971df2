@@ -1,0 +1,56 @@
+{
+  "renderable_1": {
+    "type": "sop",
+    "pose": {
+      "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      "type": "3d"
+    },
+    "data": [
+      {
+        "type": "sop",
+        "data": [
+          {
+            "type": "cube",
+            "a": [-1.0, -1.0, -1.0],
+            "b": [ 1.0,  1.0,  1.0]
+          }
+        ],
+        "style": {
+          "color": "#ffffff",
+          "fill": true
+        },
+        "pose": {
+          "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          "type": "3d"
+        }
+      }
+    ]
+  },
+  "renderable_2": {
+    "type": "sop",
+    "pose": {
+      "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      "type": "3d"
+    },
+    "data": [
+      {
+        "type": "sop",
+        "data": [
+          {
+            "type": "sphr",
+            "center": [5.0, 0.0, 0.0],
+            "radius": 1.0
+          }
+        ],
+        "style": {
+          "color": "#ffffff",
+          "fill": true
+        },
+        "pose": {
+          "pose": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+          "type": "3d"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "ping_python",
+  "modules":["sight"],
+  "graph": {
+    "nodes": [
+      {
+        "name": "ping_node",
+        "components": []
+      }
+    ],
+    "edges": []
+  },
+  "config": {
+    "ping_node": {
+      "PyCodelet": {
+        "message": "Hello Word!"
+      }
+    }
+  }
+}

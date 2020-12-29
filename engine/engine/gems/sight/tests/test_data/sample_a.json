@@ -1,0 +1,24 @@
+{
+  "cat": {
+    "type": "mammal",
+    "size": 5.0,
+    "hobbies": {
+      "sleeping": {
+        "hours": 20.0,
+        "priority": 1
+      },
+      "boxes": {
+        "hours": 2.0,
+        "priority": 2
+      }
+    }
+  },
+  "lizard": {
+    "type": "reptile",
+    "size": 1.0
+  },
+  "narwhal": {
+    "type": "mammal",
+    "size": 1000.0
+  }
+}

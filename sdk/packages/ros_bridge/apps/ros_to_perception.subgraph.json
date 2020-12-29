@@ -1,0 +1,137 @@
+{
+  "modules": [
+    "behavior_tree",
+    "ros_bridge",
+    "viewers"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "subgraph",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "interface",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "behavior_bridge",
+        "components": [
+          {
+            "name": "NodeGroup",
+            "type": "isaac::behavior_tree::NodeGroup"
+          },
+          {
+            "name": "MemorySequenceBehavior",
+            "type": "isaac::behavior_tree::MemorySequenceBehavior"
+          }
+        ]
+      },
+      {
+        "name": "ros_node",
+        "components": [
+          {
+            "name": "RosNode",
+            "type": "isaac::ros_bridge::RosNode"
+          },
+          {
+            "name": "TimeSynchronizer",
+            "type": "isaac::alice::TimeSynchronizer"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "ros_converters",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "RosToImage",
+            "type": "isaac::ros_bridge::RosToImage"
+          },
+          {
+            "name": "RosToDepth",
+            "type": "isaac::ros_bridge::RosToImage"
+          },
+          {
+            "name": "RosToCameraIntrinsics",
+            "type": "isaac::ros_bridge::RosToCameraIntrinsics"
+          }
+        ],
+        "disable_automatic_start": true
+      },
+      {
+        "name": "viewer",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ImageViewer",
+            "type": "isaac::viewers::ImageViewer"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "ros_converters/RosToImage/proto",
+        "target": "subgraph/interface/color"
+      },
+      {
+        "source": "ros_converters/RosToDepth/proto",
+        "target": "subgraph/interface/depth"
+      },
+      {
+        "source": "ros_converters/RosToCameraIntrinsics/proto",
+        "target": "subgraph/interface/depth_intrinsics"
+      },
+      {
+        "source": "subgraph/interface/color",
+        "target": "viewer/ImageViewer/image"
+      }
+    ]
+  },
+  "config": {
+    "behavior_bridge": {
+      "tick_period": "30Hz",
+      "NodeGroup": {
+        "node_names": [
+          "$(fullname ros_node)",
+          "$(fullname ros_converters)"
+        ]
+      }
+    },
+    "ros_node": {
+      "RosNode": {
+        "tick_period": "30Hz"
+      }
+    },
+    "ros_converters": {
+      "RosToDepth": {
+        "ros_node": "$(fullname ros_node)",
+        "tick_period": "60Hz",
+        "channel_name": "/depth"
+      },
+      "RosToImage": {
+        "ros_node": "$(fullname ros_node)",
+        "tick_period": "60Hz",
+        "channel_name": "/rgb"
+      },
+      "RosToCameraIntrinsics": {
+        "ros_node": "$(fullname ros_node)",
+        "tick_period": "60Hz",
+        "channel_name": "/camera_info"
+      }
+    }
+  }
+}

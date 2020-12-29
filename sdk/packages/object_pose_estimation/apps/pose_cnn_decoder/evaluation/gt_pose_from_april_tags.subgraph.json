@@ -1,0 +1,373 @@
+{
+  "modules": [
+    "fiducials:april_tags",
+    "object_pose_estimation",
+    "sight",
+    "utils",
+    "viewers"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Subgraph",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "april_tags_detection",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "dolly_T_tag36h11_10",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "dolly_T_tag36h11_11",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "dolly_T_tag36h11_12",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "dolly_T_tag36h11_13",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "dolly_T_tag36h11_14",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "dolly_T_tag36h11_15",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "dolly_T_tag36h11_16",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "dolly_T_tag36h11_17",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "dolly_T_tag36h11_18",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "dolly_T_tag36h11_19",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "AprilTagsDetection",
+            "type": "isaac::fiducials::AprilTagsDetection"
+          },
+          {
+            "name": "PoseFiducialsPnP",
+            "type": "isaac::object_pose_estimation::PoseFiducialsPnP"
+          },
+          {"name": "tag36h11_10_T_tag36h11_10_0", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_10_T_tag36h11_10_1", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_10_T_tag36h11_10_2", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_10_T_tag36h11_10_3", "type": "isaac::alice::PoseInitializer"},
+
+          {"name": "tag36h11_11_T_tag36h11_11_0", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_11_T_tag36h11_11_1", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_11_T_tag36h11_11_2", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_11_T_tag36h11_11_3", "type": "isaac::alice::PoseInitializer"},
+
+          {"name": "tag36h11_12_T_tag36h11_12_0", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_12_T_tag36h11_12_1", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_12_T_tag36h11_12_2", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_12_T_tag36h11_12_3", "type": "isaac::alice::PoseInitializer"},
+
+          {"name": "tag36h11_13_T_tag36h11_13_0", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_13_T_tag36h11_13_1", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_13_T_tag36h11_13_2", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_13_T_tag36h11_13_3", "type": "isaac::alice::PoseInitializer"},
+
+          {"name": "tag36h11_14_T_tag36h11_14_0", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_14_T_tag36h11_14_1", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_14_T_tag36h11_14_2", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_14_T_tag36h11_14_3", "type": "isaac::alice::PoseInitializer"},
+
+          {"name": "tag36h11_15_T_tag36h11_15_0", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_15_T_tag36h11_15_1", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_15_T_tag36h11_15_2", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_15_T_tag36h11_15_3", "type": "isaac::alice::PoseInitializer"},
+
+          {"name": "tag36h11_16_T_tag36h11_16_0", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_16_T_tag36h11_16_1", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_16_T_tag36h11_16_2", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_16_T_tag36h11_16_3", "type": "isaac::alice::PoseInitializer"},
+
+          {"name": "tag36h11_17_T_tag36h11_17_0", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_17_T_tag36h11_17_1", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_17_T_tag36h11_17_2", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_17_T_tag36h11_17_3", "type": "isaac::alice::PoseInitializer"},
+
+          {"name": "tag36h11_18_T_tag36h11_18_0", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_18_T_tag36h11_18_1", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_18_T_tag36h11_18_2", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_18_T_tag36h11_18_3", "type": "isaac::alice::PoseInitializer"},
+
+          {"name": "tag36h11_19_T_tag36h11_19_0", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_19_T_tag36h11_19_1", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_19_T_tag36h11_19_2", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_19_T_tag36h11_19_3", "type": "isaac::alice::PoseInitializer"},
+
+          {"name": "tag36h11_20_T_tag36h11_20_0", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_20_T_tag36h11_20_1", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_20_T_tag36h11_20_2", "type": "isaac::alice::PoseInitializer"},
+          {"name": "tag36h11_20_T_tag36h11_20_3", "type": "isaac::alice::PoseInitializer"}
+        ]
+      },
+      {
+        "name": "viewers",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ImageViewer",
+            "type": "isaac::viewers::ImageViewer"
+          },
+          {
+            "name": "Detections3Viewer",
+            "type": "isaac::viewers::Detections3Viewer"
+          }
+        ]
+      },
+      {
+        "name": "sight_widgets",
+        "components": [
+          {
+            "type": "isaac::sight::SightWidget",
+            "name": "Pose Estimation"
+          },
+          {
+            "type": "isaac::sight::SightWidget",
+            "name": "Pose Label From April Tags"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "interface/Subgraph/color",
+        "target": "april_tags_detection/AprilTagsDetection/image"
+      },
+      {
+        "source": "interface/Subgraph/intrinsics",
+        "target": "april_tags_detection/AprilTagsDetection/intrinsics"
+      },
+      {
+        "source": "interface/Subgraph/intrinsics",
+        "target": "april_tags_detection/PoseFiducialsPnP/intrinsics"
+      },
+      {
+        "source": "april_tags_detection/AprilTagsDetection/april_tags",
+        "target": "april_tags_detection/PoseFiducialsPnP/fiducials"
+      },
+      {
+        "source": "april_tags_detection/PoseFiducialsPnP/detections",
+        "target": "interface/Subgraph/output_poses"
+      },
+      {
+        "source": "april_tags_detection/PoseFiducialsPnP/detections",
+        "target": "viewers/Detections3Viewer/detections"
+      },
+      {
+        "source": "interface/Subgraph/color",
+        "target": "viewers/ImageViewer/image"
+      },
+      {
+        "source": "interface/Subgraph/intrinsics",
+        "target": "viewers/ImageViewer/intrinsics"
+      }
+    ]
+  },
+  "config": {
+    "april_tags_detection": {
+      "AprilTagsDetection": {
+        "max_tags": 50,
+        "tag_dimensions": 0.222,
+        "populate_pose_tree": true
+      },
+      "PoseFiducialsPnP": {
+        "reference_frames_of_interest": ["dolly"],
+        "reprojection_error_threshold": 7
+      },
+
+      "dolly_T_tag36h11_14": {
+        "lhs_frame": "dolly",
+        "rhs_frame": "tag36h11_14",
+        "pose": {"rotation": {"qw": 0.70710678, "qx":-0.70710678, "qy":0.0, "qz":0.0}, "translation": [-0.277875, -0.695, 0.719135]}
+      },
+      "dolly_T_tag36h11_19": {
+        "lhs_frame": "dolly",
+        "rhs_frame": "tag36h11_19",
+        "pose": {"rotation": {"qw": 0.70710678, "qx":-0.70710678, "qy":0.0, "qz":0.0}, "translation": [0.016375, -0.695, 0.719135]}
+      },
+      "dolly_T_tag36h11_15": {
+        "lhs_frame": "dolly",
+        "rhs_frame": "tag36h11_15",
+        "pose": {"rotation": {"qw": 0.70710678, "qx":-0.70710678, "qy":0.0, "qz":0.0}, "translation": [0.310625, -0.695, 0.719135]}
+      },
+      "dolly_T_tag36h11_16": {
+        "lhs_frame": "dolly",
+        "rhs_frame": "tag36h11_16",
+        "pose": {"rotation": {"qw": 0.5, "qx":-0.5, "qy":-0.5, "qz":0.5}, "translation": [0.495, -0.5079, 0.719135]}
+      },
+      "dolly_T_tag36h11_17": {
+        "lhs_frame": "dolly",
+        "rhs_frame": "tag36h11_17",
+        "pose": {"rotation": {"qw": 0.5, "qx":-0.5, "qy":-0.5, "qz":0.5}, "translation": [0.495, -0.1693, 0.719135]}
+      },
+      "dolly_T_tag36h11_10": {
+        "lhs_frame": "dolly",
+        "rhs_frame": "tag36h11_10",
+        "pose": {"rotation": {"qw": 0.5, "qx":-0.5, "qy":-0.5, "qz":0.5}, "translation": [0.495, 0.1693, 0.719135]}
+      },
+      "dolly_T_tag36h11_11": {
+        "lhs_frame": "dolly",
+        "rhs_frame": "tag36h11_11",
+        "pose": {"rotation": {"qw": 0.5, "qx":-0.5, "qy":-0.5, "qz":0.5}, "translation": [0.495, 0.5079, 0.719135]}
+      },
+      "dolly_T_tag36h11_12": {
+        "lhs_frame": "dolly",
+        "rhs_frame": "tag36h11_12",
+        "pose": {"rotation": {"qw":0.0, "qx":0.0, "qy":0.70710678, "qz":-0.70710678}, "translation": [0.310625, 0.695, 0.719135]}
+      },
+      "dolly_T_tag36h11_18": {
+        "lhs_frame": "dolly",
+        "rhs_frame": "tag36h11_18",
+        "pose": {"rotation": {"qw":0.0, "qx":0.0, "qy":0.70710678, "qz":-0.70710678}, "translation": [0.016375, 0.695, 0.719135]}
+      },
+      "dolly_T_tag36h11_13": {
+        "lhs_frame": "dolly",
+        "rhs_frame": "tag36h11_13",
+        "pose": {"rotation": {"qw":0.0, "qx":0.0, "qy":0.70710678, "qz":-0.70710678}, "translation": [-0.277875, 0.695, 0.719135]}
+      },
+
+      "tag36h11_10_T_tag36h11_10_0" : {"lhs_frame": "tag36h11_10", "rhs_frame": "tag36h11_10_0", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, -0.11, 0.0]},
+      "tag36h11_10_T_tag36h11_10_1" : {"lhs_frame": "tag36h11_10", "rhs_frame": "tag36h11_10_1", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, -0.11, 0.0]},
+      "tag36h11_10_T_tag36h11_10_2" : {"lhs_frame": "tag36h11_10", "rhs_frame": "tag36h11_10_2", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, 0.11, 0.0]},
+      "tag36h11_10_T_tag36h11_10_3" : {"lhs_frame": "tag36h11_10", "rhs_frame": "tag36h11_10_3", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, 0.11, 0.0]},
+
+      "tag36h11_11_T_tag36h11_11_0" : {"lhs_frame": "tag36h11_11", "rhs_frame": "tag36h11_11_0", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, -0.11, 0.0]},
+      "tag36h11_11_T_tag36h11_11_1" : {"lhs_frame": "tag36h11_11", "rhs_frame": "tag36h11_11_1", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, -0.11, 0.0]},
+      "tag36h11_11_T_tag36h11_11_2" : {"lhs_frame": "tag36h11_11", "rhs_frame": "tag36h11_11_2", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, 0.11, 0.0]},
+      "tag36h11_11_T_tag36h11_11_3" : {"lhs_frame": "tag36h11_11", "rhs_frame": "tag36h11_11_3", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, 0.11, 0.0]},
+
+      "tag36h11_12_T_tag36h11_12_0" : {"lhs_frame": "tag36h11_12", "rhs_frame": "tag36h11_12_0", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, -0.11, 0.0]},
+      "tag36h11_12_T_tag36h11_12_1" : {"lhs_frame": "tag36h11_12", "rhs_frame": "tag36h11_12_1", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, -0.11, 0.0]},
+      "tag36h11_12_T_tag36h11_12_2" : {"lhs_frame": "tag36h11_12", "rhs_frame": "tag36h11_12_2", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, 0.11, 0.0]},
+      "tag36h11_12_T_tag36h11_12_3" : {"lhs_frame": "tag36h11_12", "rhs_frame": "tag36h11_12_3", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, 0.11, 0.0]},
+
+      "tag36h11_13_T_tag36h11_13_0" : {"lhs_frame": "tag36h11_13", "rhs_frame": "tag36h11_13_0", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, -0.11, 0.0]},
+      "tag36h11_13_T_tag36h11_13_1" : {"lhs_frame": "tag36h11_13", "rhs_frame": "tag36h11_13_1", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, -0.11, 0.0]},
+      "tag36h11_13_T_tag36h11_13_2" : {"lhs_frame": "tag36h11_13", "rhs_frame": "tag36h11_13_2", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, 0.11, 0.0]},
+      "tag36h11_13_T_tag36h11_13_3" : {"lhs_frame": "tag36h11_13", "rhs_frame": "tag36h11_13_3", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, 0.11, 0.0]},
+
+      "tag36h11_14_T_tag36h11_14_0" : {"lhs_frame": "tag36h11_14", "rhs_frame": "tag36h11_14_0", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, -0.11, 0.0]},
+      "tag36h11_14_T_tag36h11_14_1" : {"lhs_frame": "tag36h11_14", "rhs_frame": "tag36h11_14_1", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, -0.11, 0.0]},
+      "tag36h11_14_T_tag36h11_14_2" : {"lhs_frame": "tag36h11_14", "rhs_frame": "tag36h11_14_2", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, 0.11, 0.0]},
+      "tag36h11_14_T_tag36h11_14_3" : {"lhs_frame": "tag36h11_14", "rhs_frame": "tag36h11_14_3", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, 0.11, 0.0]},
+
+      "tag36h11_15_T_tag36h11_15_0" : {"lhs_frame": "tag36h11_15", "rhs_frame": "tag36h11_15_0", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, -0.11, 0.0]},
+      "tag36h11_15_T_tag36h11_15_1" : {"lhs_frame": "tag36h11_15", "rhs_frame": "tag36h11_15_1", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, -0.11, 0.0]},
+      "tag36h11_15_T_tag36h11_15_2" : {"lhs_frame": "tag36h11_15", "rhs_frame": "tag36h11_15_2", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, 0.11, 0.0]},
+      "tag36h11_15_T_tag36h11_15_3" : {"lhs_frame": "tag36h11_15", "rhs_frame": "tag36h11_15_3", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, 0.11, 0.0]},
+
+      "tag36h11_16_T_tag36h11_16_0" : {"lhs_frame": "tag36h11_16", "rhs_frame": "tag36h11_16_0", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, -0.11, 0.0]},
+      "tag36h11_16_T_tag36h11_16_1" : {"lhs_frame": "tag36h11_16", "rhs_frame": "tag36h11_16_1", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, -0.11, 0.0]},
+      "tag36h11_16_T_tag36h11_16_2" : {"lhs_frame": "tag36h11_16", "rhs_frame": "tag36h11_16_2", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, 0.11, 0.0]},
+      "tag36h11_16_T_tag36h11_16_3" : {"lhs_frame": "tag36h11_16", "rhs_frame": "tag36h11_16_3", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, 0.11, 0.0]},
+
+      "tag36h11_17_T_tag36h11_17_0" : {"lhs_frame": "tag36h11_17", "rhs_frame": "tag36h11_17_0", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, -0.11, 0.0]},
+      "tag36h11_17_T_tag36h11_17_1" : {"lhs_frame": "tag36h11_17", "rhs_frame": "tag36h11_17_1", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, -0.11, 0.0]},
+      "tag36h11_17_T_tag36h11_17_2" : {"lhs_frame": "tag36h11_17", "rhs_frame": "tag36h11_17_2", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, 0.11, 0.0]},
+      "tag36h11_17_T_tag36h11_17_3" : {"lhs_frame": "tag36h11_17", "rhs_frame": "tag36h11_17_3", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, 0.11, 0.0]},
+
+      "tag36h11_18_T_tag36h11_18_0" : {"lhs_frame": "tag36h11_18", "rhs_frame": "tag36h11_18_0", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, -0.11, 0.0]},
+      "tag36h11_18_T_tag36h11_18_1" : {"lhs_frame": "tag36h11_18", "rhs_frame": "tag36h11_18_1", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, -0.11, 0.0]},
+      "tag36h11_18_T_tag36h11_18_2" : {"lhs_frame": "tag36h11_18", "rhs_frame": "tag36h11_18_2", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, 0.11, 0.0]},
+      "tag36h11_18_T_tag36h11_18_3" : {"lhs_frame": "tag36h11_18", "rhs_frame": "tag36h11_18_3", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, 0.11, 0.0]},
+
+      "tag36h11_19_T_tag36h11_19_0" : {"lhs_frame": "tag36h11_19", "rhs_frame": "tag36h11_19_0", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, -0.11, 0.0]},
+      "tag36h11_19_T_tag36h11_19_1" : {"lhs_frame": "tag36h11_19", "rhs_frame": "tag36h11_19_1", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, -0.11, 0.0]},
+      "tag36h11_19_T_tag36h11_19_2" : {"lhs_frame": "tag36h11_19", "rhs_frame": "tag36h11_19_2", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, 0.11, 0.0]},
+      "tag36h11_19_T_tag36h11_19_3" : {"lhs_frame": "tag36h11_19", "rhs_frame": "tag36h11_19_3", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, 0.11, 0.0]},
+
+      "tag36h11_20_T_tag36h11_20_0" : {"lhs_frame": "tag36h11_20", "rhs_frame": "tag36h11_20_0", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, -0.11, 0.0]},
+      "tag36h11_20_T_tag36h11_20_1" : {"lhs_frame": "tag36h11_20", "rhs_frame": "tag36h11_20_1", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, -0.11, 0.0]},
+      "tag36h11_20_T_tag36h11_20_2" : {"lhs_frame": "tag36h11_20", "rhs_frame": "tag36h11_20_2", "pose": [1.0, 0.0, 0.0, 0.0, 0.11, 0.11, 0.0]},
+      "tag36h11_20_T_tag36h11_20_3" : {"lhs_frame": "tag36h11_20", "rhs_frame": "tag36h11_20_3", "pose": [1.0, 0.0, 0.0, 0.0, -0.11, 0.11, 0.0]}
+    },
+    "viewers": {
+      "ImageViewer": {
+        "camera_name": "camera"
+      },
+      "Detections3Viewer": {
+        "frame": "camera",
+        "object_T_box_center": [1.0, 0, 0, 0, 0, 0, 0.375],
+        "box_dimensions": [0.9, 1.32, 0.25],
+        "mesh_name": "dolly"
+      }
+    },
+    "sight_widgets": {
+      "Pose Label From April Tags": {
+        "type": "2d",
+        "channels": [
+          {
+            "name": "$(fullname viewers/ImageViewer/image)"
+          },
+          {
+            "name": "$(fullname viewers/Detections3Viewer/bounding_box)"
+          },
+          {
+            "name": "$(fullname viewers/Detections3Viewer/mesh)"
+          }
+        ]
+      }
+    },
+    "websight": {
+      "WebsightServer": {
+        "webroot": "packages/sight/webroot",
+        "assetroot": "external/industrial_dolly_pose_estimation_cnn_model",
+        "port": 3000,
+        "ui_config": {
+          "assets": {
+            "dolly": {
+              "obj": "/apps/assets/industrial_dolly_frame.obj",
+              "rotation": [
+                0.70710678118,
+                0.70710678118,
+                0,
+                0
+              ],
+              "translation": [
+                0,
+                0,
+                0.4
+              ],
+              "scale": 1.0
+            }
+          }
+        }
+      }
+    }
+  }
+}

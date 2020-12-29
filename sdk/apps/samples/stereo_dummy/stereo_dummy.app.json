@@ -1,0 +1,102 @@
+{
+  "name": "stereo_dummy",
+  "modules": [
+    "message_generators",
+    "sight",
+    "viewers"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "dummy_camera_generator",
+        "components": [
+          {
+            "name": "isaac.alice.MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "CameraGenerator",
+            "type": "isaac::message_generators::CameraGenerator"
+          }
+        ]
+      },
+      {
+        "name": "dummy_camera_instrinsics",
+        "components": [
+          {
+            "name": "isaac.alice.MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "CameraIntrinsicsGenerator",
+            "type": "isaac::message_generators::CameraIntrinsicsGenerator"
+          }
+        ]
+      },
+      {
+        "name": "depth_visualization",
+        "components": [
+          {
+            "name": "isaac.alice.MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "isaac.viewers.DepthCameraViewer",
+            "type": "isaac::viewers::DepthCameraViewer"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "dummy_camera_generator/CameraGenerator/depth",
+        "target": "depth_visualization/isaac.viewers.DepthCameraViewer/depth"
+      },
+      {
+        "source": "dummy_camera_instrinsics/CameraIntrinsicsGenerator/intrinsics",
+        "target": "depth_visualization/isaac.viewers.DepthCameraViewer/intrinsics"
+      },
+      {
+        "source": "dummy_camera_generator/CameraGenerator/depth",
+        "target": "dummy_camera_instrinsics/CameraIntrinsicsGenerator/image"
+      }
+    ]
+  },
+  "config": {
+    "dummy_camera_generator": {
+      "CameraGenerator": {
+        "rows": 240,
+        "cols": 320,
+        "tick_period": "50ms"
+      }
+    },
+    "dummy_camera_instrinsics": {
+      "CameraIntrinsicsGenerator": {
+        "focal_length": [1, 1],
+        "optical_center": [1, 1]
+      }
+    },
+    "websight": {
+      "WebsightServer": {
+        "port": 3000,
+        "ui_config": {
+          "windows": {
+            "Dummy Camera": {
+              "renderer": "2d",
+              "channels": [
+                {
+                  "name": "stereo_dummy/depth_visualization/isaac.viewers.DepthCameraViewer/Depth"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "depth_visualization": {
+      "isaac.viewers.DepthCameraViewer": {
+        "max_visualization_depth": 20.0
+      }
+    }
+  }
+}

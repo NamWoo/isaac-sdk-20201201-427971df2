@@ -1,0 +1,177 @@
+{
+  "modules": [
+    "ml",
+    "object_pose_estimation",
+    "utils"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "interface",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Subgraph",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "simulation",
+        "subgraph": "packages/object_pose_estimation/apps/pose_cnn_decoder/training/pose_estimation_sim.subgraph.json"
+      },
+      {
+        "name": "encoder_crop_downsample",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ImageDetectionExtraction",
+            "type": "isaac::ml::ImageDetectionExtraction"
+          }
+        ]
+      },
+      {
+        "name": "rigid_bodies_convertor",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "RigidbodyToDetections3",
+            "type": "isaac::ml::RigidbodyToDetections3"
+          }
+        ]
+      },
+      {
+        "name": "detection3_convertor",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "PoseEncoder",
+            "type": "isaac::object_pose_estimation::PoseEncoder"
+          }
+        ]
+      },
+      {
+        "name": "detection_convertor",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "BoundingBoxEncoder",
+            "type": "isaac::object_pose_estimation::BoundingBoxEncoder"
+          }
+        ]
+      },
+      {
+        "name": "decoder_crop_downsample",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ImageDetectionExtraction",
+            "type": "isaac::ml::ImageDetectionExtraction"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "simulation.interface/output/encoder_color",
+        "target": "encoder_crop_downsample/ImageDetectionExtraction/image"
+      },
+      {
+        "source": "simulation.interface/Subgraph/decoder_bounding_boxes",
+        "target": "encoder_crop_downsample/ImageDetectionExtraction/detections"
+      },
+      {
+        "source": "encoder_crop_downsample/ImageDetectionExtraction/tensor",
+        "target": "interface/Subgraph/sample_encoder_image"
+      },
+      {
+        "source": "simulation.interface/output/bodies",
+        "target": "rigid_bodies_convertor/RigidbodyToDetections3/rigid_bodies"
+      },
+      {
+        "source": "rigid_bodies_convertor/RigidbodyToDetections3/detections",
+        "target": "detection3_convertor/PoseEncoder/detection3"
+      },
+      {
+        "source": "rigid_bodies_convertor/RigidbodyToDetections3/detections",
+        "target": "interface/Subgraph/sample_pose"
+      },
+      {
+        "source": "simulation.interface/output/encoder_color_intrinsics",
+        "target": "detection3_convertor/PoseEncoder/intrinsics"
+      },
+      {
+        "source": "detection3_convertor/PoseEncoder/center_and_depth",
+        "target": "interface/Subgraph/sample_center_and_depth"
+      },
+      {
+        "source": "detection3_convertor/PoseEncoder/rotation",
+        "target": "interface/Subgraph/sample_rotation"
+      },
+      {
+        "source": "simulation.interface/Subgraph/decoder_bounding_boxes",
+        "target": "detection_convertor/BoundingBoxEncoder/detection"
+      },
+      {
+        "source": "detection_convertor/BoundingBoxEncoder/tensor",
+        "target": "interface/Subgraph/sample_detection"
+      },
+      {
+        "source": "simulation.interface/output/decoder_segmentation_class",
+        "target": "decoder_crop_downsample/ImageDetectionExtraction/image"
+      },
+      {
+        "source": "simulation.interface/Subgraph/decoder_bounding_boxes",
+        "target": "decoder_crop_downsample/ImageDetectionExtraction/detections"
+      },
+      {
+        "source": "decoder_crop_downsample/ImageDetectionExtraction/tensor",
+        "target": "interface/Subgraph/sample_decoder_image"
+      }
+    ]
+  },
+  "config": {
+    "encoder_crop_downsample": {
+      "ImageDetectionExtraction": {
+        "downsample_size": [128, 128],
+        "pixel_normalization_mode": "Unit",
+        "tensor_index_order": "012"
+      }
+    },
+    "decoder_crop_downsample": {
+      "ImageDetectionExtraction": {
+        "downsample_size": [128, 128],
+        "pixel_normalization_mode": "None",
+        "tensor_index_order": "012"
+      }
+    },
+    "rigid_bodies_convertor": {
+      "RigidbodyToDetections3": {
+        "ref_frame_id": 0
+      }
+    },
+    "detection3_convertor": {
+      "PoseEncoder": {
+        "center_out_of_frame_tolerance": 10
+      }
+    }
+  }
+}

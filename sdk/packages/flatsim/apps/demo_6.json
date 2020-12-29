@@ -1,0 +1,472 @@
+{
+  "modules": [
+    "atlas",
+    "flatsim",
+    "map",
+    "message_generators",
+    "navigation",
+    "planner_cost"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "map",
+        "start_order": -200,
+        "components": [
+          {
+            "name": "isaac.map.Map",
+            "type": "isaac::map::Map"
+          },
+          {
+            "name": "map",
+            "type": "isaac::navigation::NavigationMap"
+          },
+          {
+            "name": "occupancy",
+            "type": "isaac::map::OccupancyGridMapLayer"
+          },
+          {
+            "name": "waypoints",
+            "type": "isaac::map::WaypointMapLayer"
+          },
+          {
+            "name": "restricted_area",
+            "type": "isaac::map::PolygonMapLayer"
+          }
+        ]
+      },
+      {
+        "name": "range_limit",
+        "components": [
+          {
+            "name": "PolygonDistanceQuadraticCostBuilder",
+            "type": "isaac::planner_cost::PolygonDistanceQuadraticCostBuilder"
+          }
+        ]
+      },
+      {
+        "name": "sim_range_scan",
+        "components": [
+          {
+            "name": "robot_gt_T_lidar_gt",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "robot_T_lidar",
+            "type": "isaac::alice::PoseInitializer"
+          },
+          {
+            "name": "isaac.atlas.PublishMapRoi",
+            "type": "isaac::atlas::PublishMapRoi"
+          },
+          {
+            "name": "isaac.flatsim.TraceOccupancyMap",
+            "type": "isaac::flatsim::TraceOccupancyMap"
+          },
+          {
+            "name": "isaac.message_generators.LatticeGenerator",
+            "type": "isaac::message_generators::LatticeGenerator"
+          },
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      },
+      {
+        "name": "flatscan_noiser",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "Random",
+            "type": "isaac::alice::Random"
+          },
+          {
+            "name": "FlatscanNoiser",
+            "type": "isaac::flatsim::FlatscanNoiser"
+          }
+        ]
+      },
+      {
+        "name": "flatmap_cost",
+        "start_order": -50,
+        "components": [
+          {
+            "name": "OccupancyFlatmapCost",
+            "type": "isaac::map::OccupancyFlatmapCost"
+          },
+          {
+            "name": "directed_area_1",
+            "type": "isaac::map::DirectedAreaFlatmapCost"
+          },
+          {
+            "name": "directed_area_2",
+            "type": "isaac::map::DirectedAreaFlatmapCost"
+          },
+          {
+            "name": "directed_area_3",
+            "type": "isaac::map::DirectedAreaFlatmapCost"
+          },
+          {
+            "name": "directed_area_4",
+            "type": "isaac::map::DirectedAreaFlatmapCost"
+          },
+          {
+            "name": "directed_area_5",
+            "type": "isaac::map::DirectedAreaFlatmapCost"
+          },
+          {
+            "name": "restricted_area",
+            "type": "isaac::map::PolygonFlatmapCost"
+          },
+          {
+            "name": "MultiplicationFlatmapCost",
+            "type": "isaac::map::MultiplicationFlatmapCost"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "flatscan_noiser/FlatscanNoiser/noisy_flatscan",
+        "target": "flatsim.navigation.subgraph/interface/flatscan_2_for_obstacles"
+      },
+      {
+        "source": "flatsim.simulation.subgraph/interface/world_T_robot_gt",
+        "target": "sim_range_scan/isaac.atlas.PublishMapRoi/world_T_robot_gt"
+      },
+      {
+        "source": "sim_range_scan/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "sim_range_scan/isaac.atlas.PublishMapRoi/map_lattice"
+      },
+      {
+        "source": "sim_range_scan/isaac.atlas.PublishMapRoi/roi",
+        "target": "sim_range_scan/isaac.flatsim.TraceOccupancyMap/occupancy_map"
+      },
+      {
+        "source": "sim_range_scan/isaac.message_generators.LatticeGenerator/gridmap_lattice",
+        "target": "sim_range_scan/isaac.flatsim.TraceOccupancyMap/occupancy_map_lattice"
+      },
+      {
+        "source": "sim_range_scan/isaac.flatsim.TraceOccupancyMap/flatscan",
+        "target": "flatscan_noiser/FlatscanNoiser/flatscan"
+      },
+      {
+        "source": "flatscan_noiser/FlatscanNoiser/noisy_flatscan",
+        "target": "flatsim.navigation.subgraph/interface/flatscan_2_for_localization"
+      }
+    ]
+  },
+  "config": {
+    "flatsim.navigation.shared_robot_model": {
+      "SphericalRobotShapeComponent": {
+        "circles": [
+          { "center": [-0.17 ,0.0], "radius": 0.31},
+          { "center": [-0.43 ,0.0], "radius": 0.31},
+          { "center": [ 0.1 , 0.0], "radius": 0.31},
+          { "center": [-0.7 , 0.0], "radius": 0.31},
+          { "center": [ 0.31, 0.21], "radius": 0.105},
+          { "center": [-0.91,-0.21], "radius": 0.105},
+          { "center": [-0.91, 0.21], "radius": 0.105},
+          { "center": [ 0.31,-0.21], "radius": 0.105}
+        ]
+      }
+    },
+    "flatsim.simulation.robot_spawn_pose": {
+      "PoseInitializer": {
+        "pose": {
+          "rotation": { "yaw_degrees": 180.0 },
+          "translation": [21.0, 17.0, 0.0]
+        }
+      }
+    },
+    "flatsim.navigation.local_map.evidence_map_postprocessing": {
+      "isaac.egm_fusion.EvidenceToBinaryMap": {
+        "is_optimistic": true
+      },
+      "isaac.egm_fusion.EvidenceMapInpaint": {
+        "rectangles": [[[-1.015, 0.415],[-0.315, 0.315]]]
+      }
+    },
+    "flatsim.navigation.localization.viewers": {
+      "FlatscanViewer2": {
+        "flatscan_frame": "lidar_back"
+      }
+    },
+    "flatsim.navigation.localization.scan_localization": {
+      "ParticleFilterLocalization": {
+        "flatscan_2_frame": "lidar_back"
+      }
+    },
+    "flatsim.navigation.control.lqr": {
+      "isaac.lqr.DifferentialBaseLqrPlanner": {
+        "min_speed": -0.10,
+        "max_speed": 0.65,
+        "use_predicted_position": true,
+        "reset_robot_position": 10,
+        "distance_to_waypoint": 0.25,
+        "angle_to_waypoint": 0.0872665,
+        "max_predicted_position_error": 0.5
+      }
+    },
+    "flatsim.simulation.sim_range_scan": {
+      "isaac.message_generators.LatticeGenerator": {
+        "cell_size": 0.2
+      },
+      "isaac.flatsim.TraceOccupancyMap": {
+        "num_beams": 577,
+        "max_range": 40.0,
+        "min_angle": -0.43633231299,
+        "max_angle": 3.49065850399
+      },
+      "robot_T_lidar": {
+        "pose": {
+          "rotation": { "yaw_degrees": -60.0 },
+          "translation": [ 0.335, 0.24, 0.17 ]
+        }
+      },
+      "robot_gt_T_lidar_gt": {
+        "pose": {
+          "rotation": { "yaw_degrees": -60.0 },
+          "translation": [ 0.335, 0.24, 0.17 ]
+        }
+      }
+    },
+    "flatsim.navigation.local_map.range_scan_2_to_evidence_map": {
+      "isaac.egm_fusion.RangeScanToEvidenceMap": {
+        "sensor_frame": "lidar_back"
+      }
+    },
+    "flatsim.navigation.local_map.range_scan_lattice_2": {
+      "isaac.message_generators.LatticeGenerator": {
+        "reference_frame_name": "lidar_back",
+        "lattice_frame_name": "lidar_back_lat",
+        "dimensions": [396,396],
+        "relative_offset": [-0.5, -0.15]
+      }
+    },
+    "flatsim.navigation.local_map.range_scan_lattice_1": {
+      "isaac.message_generators.LatticeGenerator": {
+        "dimensions": [396,396],
+        "relative_offset": [-0.5, -0.15]
+      }
+    },
+    "flatsim.navigation.range_scan_robot_removal_2": {
+      "RangeScanRobotRemoval": {
+        "sensor_frame": "lidar_back"
+      }
+    },
+    "sim_range_scan": {
+      "isaac.message_generators.LatticeGenerator": {
+        "relative_offset": [-0.25, -0.5],
+        "dimensions": [256, 256],
+        "cell_size": 0.2,
+        "lattice_frame_name": "lidar_back_gt_lattice",
+        "reference_frame_name": "lidar_back_gt",
+        "tick_period": "100Hz"
+      },
+      "isaac.flatsim.TraceOccupancyMap": {
+        "num_beams": 577,
+        "max_range": 40.0,
+        "min_angle": -0.43633231299,
+        "max_angle": 3.49065850399,
+        "lidar_frame": "lidar_back_gt"
+      },
+      "robot_T_lidar": {
+        "lhs_frame": "robot",
+        "rhs_frame": "lidar_back",
+        "pose": {
+          "rotation": { "yaw_degrees": 120.0 },
+          "translation": [ -0.985, -0.24, 0.17 ]
+        }
+      },
+      "robot_gt_T_lidar_gt": {
+        "lhs_frame": "robot_gt",
+        "rhs_frame": "lidar_back_gt",
+        "pose": {
+          "rotation": { "yaw_degrees": 120.0 },
+          "translation": [ -0.985, -0.24, 0.17 ]
+        }
+      }
+    },
+    "map": {
+      "occupancy": {
+        "cell_size": 0.05,
+        "filename": "apps/assets/maps/virtual_factory_1.png"
+      },
+      "waypoints": {
+        "tick_period": "1.0"
+      },
+      "restricted_area": {
+        "tick_period": "1.0",
+        "polygons": {
+          "assembly_line": {
+            "points": [
+              [19.0, 20.0], [19.0, 105.5], [31.0, 105.5], [31.0, 20.0]
+            ]
+          }
+        }
+      }
+    },
+    "flatsim.navigation.planner.pose2_graph_planner": {
+      "Pose2DirectedGraphLoader": {
+        "bucket_size": 0.5,
+        "graph_filename": "/tmp/pose2_grid_graph.capnp.bin"
+      },
+      "Pose2GraphPlanner": {
+        "obstacle_names": [
+          "map/isaac.navigation.DistanceMap",
+          "map/restricted_area",
+          "local_map"
+        ]
+      },
+      "Pose2GridGraphBuilder": {
+        "obstacle_names": [
+          "map/isaac.navigation.DistanceMap",
+          "map/restricted_area"
+        ]
+      }
+    },
+    "flatsim.navigation.planner.planner_switch_behavior": {
+      "SwitchBehavior": {
+        "desired_behavior": "$(fullname flatsim.navigation.planner.pose2_graph_planner)"
+      }
+    },
+    "flatmap_cost": {
+      "MultiplicationFlatmapCost": {
+        "maximum_weight": 100.0,
+        "minimum_weight": 0.001
+      },
+      "OccupancyFlatmapCost": {
+        "backward_penalty": 50.0
+      },
+      "directed_area_1": {
+        "polygon": [
+          [30.0, 30.0], [40.0, 30.0], [35.0, 40.0], [30.0, 40.0]
+        ],
+        "penality_angle": 1.0,
+        "outside_weight": 1.0,
+        "outside_backward_penalty": 1.0,
+        "target_angle": -1.57
+      },
+      "directed_area_2": {
+        "color": [120, 0, 120],
+        "polygon": [
+          [40.0, 30.0], [43.0, 30.0], [38.0, 40.0], [35.0, 40.0]
+        ],
+        "penality_angle": 1.0,
+        "outside_weight": 1.0,
+        "outside_backward_penalty": 1.0,
+        "target_angle": 2.03
+      },
+      "directed_area_3": {
+        "polygon": [
+          [43.0, 30.0], [50.0, 30.0], [50.0, 40.0], [38.0, 40.0]
+        ],
+        "penality_angle": 1.0,
+        "outside_weight": 1.0,
+        "outside_backward_penalty": 1.0,
+        "target_angle": -1.57
+      },
+      "directed_area_4": {
+        "polygon": [
+          [35.0, 50.0], [45.0, 50.0], [45.0, 60.0], [35.0, 60.0]
+        ],
+        "penality_angle": 1.0,
+        "outside_weight": 1.0,
+        "outside_backward_penalty": 1.0,
+        "target_angle": -1.57
+      },
+      "directed_area_5": {
+        "color": [200, 200, 0],
+        "polygon": [
+          [25.0, 15.0], [30.0, 15.0], [30.0, 20.0], [25.0, 20.0]
+        ],
+        "penality_angle": 1.0,
+        "outside_weight": 1.0,
+        "outside_backward_penalty": 1.0,
+        "target_angle": 3.14
+      },
+      "restricted_area": {
+        "polygon_layer_name": "map/restricted_area",
+        "use_robot_center": false,
+        "outside_backward_penalty": 1.0,
+        "outside_weight": 1.0
+      }
+    },
+    "range_limit": {
+      "PolygonDistanceQuadraticCostBuilder": {
+        "gain": 10000.0,
+        "offset": 0.01,
+        "indices": [3, 4],
+        "polygon": [
+          [0, 0.298], [0.0875, 0.15], [0.2, 0.2], [0.585, 0.2587], [1.25, 0.25], [2.2, 0],
+          [1.25, -0.2], [0.585, -0.2587], [0.2, -0.2], [0.0875, -0.15], [0, -0.298],
+          [-0.0875, -0.15], [-0.2, -0.2], [-0.585, -0.25], [-1, 0], [-0.585, 0.2587],
+          [-0.2, 0.2], [-0.0875, 0.15]
+        ]
+      }
+    },
+    "flatsim.navigation.control.lqr_state_cost": {
+      "LimitRange": {
+        "min_value": [0.0, 0.0, 0.0, -0.1, -0.25],
+        "max_value": [0.0, 0.0, 0.0, 0.65, 0.25]
+      },
+      "TotalSum": {
+        "component_names": [
+          "$(fullname flatsim.navigation.control.lqr_state_cost/DistanceQuadraticCostBuilder)",
+          "$(fullname flatsim.navigation.control.lqr_state_cost/LimitRange)",
+          "$(fullname flatsim.navigation.control.lqr_state_cost/TargetRange)",
+          "$(fullname range_limit/PolygonDistanceQuadraticCostBuilder)"
+        ]
+      }
+    },
+    "flatsim.navigation.sight_widgets": {
+      "Planner View": {
+        "type": "2d",
+        "channels": [
+          { "name": "flatsim.navigation.local_map.inpainted_egm_viewer/EvidenceGridMapViewer/egm" },
+          { "name": "flatmap_cost/directed_area_1/area" },
+          { "name": "flatmap_cost/directed_area_2/area" },
+          { "name": "flatmap_cost/directed_area_3/area" },
+          { "name": "flatmap_cost/directed_area_4/area" },
+          { "name": "flatmap_cost/directed_area_5/area" },
+          { "name": "map/restricted_area/polygons" },
+          { "name": "flatsim.navigation.go_to.goal_viewer/GoalViewer/goal" },
+          { "name": "flatsim.navigation.planner.viewers/Plan2Viewer/plan" },
+          { "name": "flatsim.navigation.localization.viewers/RobotViewer/robot_model" },
+          { "name": "flatsim.navigation.localization.viewers/PoseTrailViewer/pose_trail" },
+          { "name": "flatsim.navigation.control.lqr/isaac.lqr.DifferentialBaseLqrPlanner/plan" }
+        ]
+      },
+      "Map View": {
+        "type": "2d",
+        "channels": [
+          { "name": "map/occupancy/map" },
+          { "name": "flatmap_cost/directed_area_1/area" },
+          { "name": "flatmap_cost/directed_area_2/area" },
+          { "name": "flatmap_cost/directed_area_3/area" },
+          { "name": "flatmap_cost/directed_area_4/area" },
+          { "name": "flatmap_cost/directed_area_5/area" },
+          { "name": "map/restricted_area/polygons" },
+          { "name": "map/waypoints/waypoints" },
+          { "name": "flatsim.navigation.localization.viewers/FlatscanViewer/beam_endpoints" },
+          { "name": "flatsim.navigation.localization.viewers/FlatscanViewer2/beam_endpoints" },
+          { "name": "flatsim.navigation.go_to.goal_viewer/GoalViewer/goal" },
+          { "name": "flatsim.navigation.localization.viewers/RobotViewer/robot_model" },
+          { "name": "flatsim.navigation.localization.viewers/RobotViewer/robot" },
+          { "name": "flatsim.navigation.planner.viewers/Plan2Viewer/plan" },
+          { "name": "flatsim.navigation.control.lqr/isaac.lqr.DifferentialBaseLqrPlanner/plan" }
+        ]
+      }
+    },
+    "websight": {
+      "WebsightServer": {
+        "port": 3000
+      }
+    }
+  }
+}

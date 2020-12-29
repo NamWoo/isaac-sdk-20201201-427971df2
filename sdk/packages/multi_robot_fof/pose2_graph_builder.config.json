@@ -1,0 +1,71 @@
+{
+  "config": {
+    "map": {
+      "occupancy": {
+        "cell_size": 0.05,
+        "filename": "packages/multi_robot_fof/assets/multi_robot_fof_small_warehouse.png"
+      },
+      "restricted_area": {
+        "tick_period": "1.0",
+        "polygons": {
+          "station_1": {
+            "points": [
+              [12.0, 8.37], [12.0, 10.63], [12.95, 10.63], [12.95, 8.37]
+            ]
+          },
+          "station_2": {
+            "points": [
+              [12.0, 12.72], [12.0, 14.72], [12.95, 14.72], [12.95, 12.72]
+            ]
+          },
+          "station_3": {
+            "points": [
+              [18.75, 8.37], [18.75, 10.63], [19.7, 10.63], [19.7, 8.37]
+            ]
+          },
+          "station_4": {
+            "points": [
+              [18.75, 12.72], [18.75, 14.72], [19.7, 14.72], [19.7, 12.72]
+            ]
+          },
+          "parking_area": {
+            "points": [
+              [0.25, 6.87], [0.25, 13.17], [1.95, 13.17], [1.95, 12.87], [0.45, 12.87],
+              [0.45, 11.17], [1.95, 11.17], [1.95, 10.87], [0.45, 10.87], [0.45, 9.17],
+              [1.95, 9.17], [1.95, 8.87], [0.45, 8.87], [0.45, 7.17], [1.95, 7.17], [1.95, 6.87]
+            ]
+          }
+        }
+      }
+    },
+    "pose2_graph_builder.pose2_graph_builder": {
+      "Pose2GridGraphBuilder": {
+        "neighbours_roi_radius": 5,
+        "backward_motion_penalty": 10.0,
+        "tick_period": "1.0"
+      }
+    },
+    "flatmap_cost": {
+      "inside_round": {
+        "polyline": [
+          [8.05, 4.67], [6.95, 5.97], [6.95, 17.37], [7.25, 17.62], [22.55, 17.62],
+          [23.05, 17.07], [23.05, 4.87], [22.85, 4.67], [8.05, 4.67]
+        ],
+        "width": 0.6,
+        "penality_angle": 1.0,
+        "penality_distance": 2.0,
+        "outside_weight": 10.0
+      },
+      "outside_round": {
+        "polyline": [
+          [7.45, 3.17], [23.45, 3.17], [24.45, 4.17], [24.45, 17.77], [23.45, 18.77],
+          [6.45, 18.77], [5.45, 17.77], [5.45, 5.37], [7.45, 3.17]
+        ],
+        "width": 0.6,
+        "penality_angle": 1.0,
+        "penality_distance": 2.0,
+        "outside_weight": 10.0
+      }
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+    "name": "detect_net_eval_inference",
+    "modules": [
+      "sight"
+    ],
+    "backend": {
+      "scheduler": {
+        "use_time_machine": true,
+        "clock_scale": 1.0
+      }
+    },
+    "graph": {
+      "nodes": [
+        {
+          "name": "detect_net_inference",
+          "subgraph": "packages/detect_net/apps/detect_net_inference.subgraph.json"
+        },
+        {
+          "name": "replay",
+          "subgraph": "packages/cask/apps/replay.subgraph.json"
+        },
+        {
+          "name": "record",
+          "subgraph": "packages/cask/apps/record.subgraph.json"
+        }
+      ],
+      "edges": [
+        {
+          "source": "replay.interface/output/color",
+          "target": "detect_net_inference.subgraph/interface/image"
+        },
+        {
+          "source": "detect_net_inference.subgraph/interface/detections",
+          "target": "record.interface/input/predicted_detections"
+        }
+      ]
+    },
+    "config": {
+      "replay.interface": {
+        "output": {
+          "auto_stop_application": true,
+          "report_success": true,
+          "tick_period": "10Hz",
+          "use_recorded_message_time": true
+        }
+      },
+      "record.interface": {
+        "input": {
+          "enabled": true
+        }
+      }
+    }
+  }

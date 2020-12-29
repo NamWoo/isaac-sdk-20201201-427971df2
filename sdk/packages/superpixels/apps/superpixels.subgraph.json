@@ -1,0 +1,152 @@
+{
+  "name": "superpixels",
+  "modules": [
+    "rgbd_processing",
+    "superpixels",
+    "viewers"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "subgraph",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "interface",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "camera_viewer",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "viewer",
+            "type": "isaac::viewers::ImageViewer"
+          }
+        ]
+      },
+      {
+        "name": "rgbd_points",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "points",
+            "type": "isaac::rgbd_processing::DepthPoints"
+          }
+        ]
+      },
+      {
+        "name": "rgbd_edges",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "edges",
+            "type": "isaac::rgbd_processing::DepthEdges"
+          }
+        ]
+      },
+      {
+        "name": "rgbd_normals",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "normals",
+            "type": "isaac::rgbd_processing::DepthNormals"
+          }
+        ]
+      },
+      {
+        "name": "superpixels",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "superpixels",
+            "type": "isaac::superpixels::RgbdSuperpixels"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "subgraph/interface/color",
+        "target": "camera_viewer/viewer/image"
+      },
+      {
+        "source": "subgraph/interface/depth",
+        "target": "rgbd_points/points/depth"
+      },
+      {
+        "source": "subgraph/interface/depth_intrinsics",
+        "target": "rgbd_points/points/intrinsics"
+      },
+      {
+        "source": "subgraph/interface/depth",
+        "target": "rgbd_edges/edges/depth"
+      },
+      {
+        "source": "rgbd_points/points/points",
+        "target": "rgbd_normals/normals/points"
+      },
+      {
+        "source": "rgbd_edges/edges/edges",
+        "target": "rgbd_normals/normals/edges"
+      },
+      {
+        "source": "subgraph/interface/depth",
+        "target": "superpixels/superpixels/depth"
+      },
+      {
+        "source": "subgraph/interface/color",
+        "target": "superpixels/superpixels/color"
+      },
+      {
+        "source": "rgbd_points/points/points",
+        "target": "superpixels/superpixels/points"
+      },
+      {
+        "source": "rgbd_edges/edges/edges",
+        "target": "superpixels/superpixels/edges"
+      },
+      {
+        "source": "rgbd_normals/normals/normals",
+        "target": "superpixels/superpixels/normals"
+      },
+      {
+        "source": "superpixels/superpixels/superpixels",
+        "target": "subgraph/interface/superpixels"
+      },
+      {
+        "source": "superpixels/superpixels/surflets",
+        "target": "subgraph/interface/surflets"
+      }
+    ]
+  },
+  "config": {
+    "rgbd_edges": {
+      "edges": {
+        "min_depth": 0.05,
+        "max_depth": 3.0
+      }
+    }
+  }
+}

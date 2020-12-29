@@ -1,0 +1,77 @@
+{
+  "name": "isaac_c_api_test",
+  "modules": [
+    "message_generators"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "dummy",
+        "components": [
+          {
+            "name": "isaac.alice.MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "dummy_camera",
+            "type": "isaac::message_generators::CameraGenerator"
+          }
+        ]
+      },
+      {
+        "name": "flatscan_generator",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "generator",
+            "type": "isaac::message_generators::FlatscanGenerator"
+          }
+        ]
+      },
+      {
+        "name": "node",
+        "components": [
+          {
+            "name": "ledger",
+            "type": "isaac::alice::MessageLedger"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "node/ledger/in",
+        "target": "node/ledger/out"
+      }
+    ]
+  },
+  "config": {
+    "dummy": {
+      "dummy_camera": {
+        "rows": 240,
+        "cols": 320,
+        "tick_period": "50ms"
+      }
+    },
+    "flatscan_generator": {
+      "generator": {
+        "beam_count": 1000,
+        "tick_period": "1000Hz",
+        "dummy1": true,
+        "dummy2": 1.111,
+        "dummy3": [
+          1,
+          2,
+          3
+        ],
+        "dummy4": {
+          "test1": 100,
+          "test2": "hi"
+        }
+      }
+    }
+  }
+}

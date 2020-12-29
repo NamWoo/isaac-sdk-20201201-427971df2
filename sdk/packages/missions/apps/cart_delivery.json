@@ -1,0 +1,213 @@
+{
+    "missions": [
+        {
+            "robot": "str-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "delivery.goal_approach_dolly_pickup": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "pickup_face_dolly_8",
+                      "tick_period": "250ms"
+                    }
+                },
+                "delivery.goal_drive_to_dolly_dropoff": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "dropoff_8",
+                      "tick_period": "250ms"
+                    }
+                }
+            }
+        },
+        {
+            "robot": "str-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "delivery.goal_approach_dolly_pickup": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "pickup_face_dolly_7",
+                      "tick_period": "250ms"
+                    }
+                },
+                "delivery.goal_drive_to_dolly_dropoff": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "dropoff_7",
+                      "tick_period": "250ms"
+                    }
+                }
+            }
+        },
+        {
+            "robot": "str-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "delivery.goal_approach_dolly_pickup": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "pickup_face_dolly_9",
+                      "tick_period": "250ms"
+                    }
+                },
+                "delivery.goal_drive_to_dolly_dropoff": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "dropoff_9",
+                      "tick_period": "250ms"
+                    }
+                }
+            }
+        },
+        {
+            "robot": "str-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "delivery.goal_approach_dolly_pickup": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "pickup_face_dolly_10",
+                      "tick_period": "250ms"
+                    }
+                },
+                "delivery.goal_drive_to_dolly_dropoff": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "dropoff_10",
+                      "tick_period": "250ms"
+                    }
+                }
+            }
+        },
+        {
+            "robot": "str-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "delivery.goal_approach_dolly_pickup": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "pickup_face_dolly_11",
+                      "tick_period": "250ms"
+                    }
+                },
+                "delivery.goal_drive_to_dolly_dropoff": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "dropoff_11",
+                      "tick_period": "250ms"
+                    }
+                }
+            }
+        },
+        {
+            "robot": "str-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "delivery.goal_approach_dolly_pickup": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "pickup_face_dolly_12",
+                      "tick_period": "250ms"
+                    }
+                },
+                "delivery.goal_drive_to_dolly_dropoff": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "dropoff_12",
+                      "tick_period": "250ms"
+                    }
+                }
+            }
+        },
+        {
+            "robot": "str-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "delivery.goal_approach_dolly_pickup": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "pickup_face_dolly_1",
+                      "tick_period": "250ms"
+                    }
+                },
+                "delivery.goal_drive_to_dolly_dropoff": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "dropoff_1",
+                      "tick_period": "250ms"
+                    }
+                }
+            }
+        },
+        {
+            "robot": "str-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "delivery.goal_approach_dolly_pickup": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "pickup_face_dolly_2",
+                      "tick_period": "250ms"
+                    }
+                },
+                "delivery.goal_drive_to_dolly_dropoff": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "dropoff_2",
+                      "tick_period": "250ms"
+                    }
+                }
+            }
+        },
+        {
+            "robot": "str-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "delivery.goal_approach_dolly_pickup": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "pickup_face_dolly_3",
+                      "tick_period": "250ms"
+                    }
+                },
+                "delivery.goal_drive_to_dolly_dropoff": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "dropoff_3",
+                      "tick_period": "250ms"
+                    }
+                }
+            }
+        },
+        {
+            "robot": "str-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "delivery.goal_approach_dolly_pickup": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "pickup_face_dolly_4",
+                      "tick_period": "250ms"
+                    }
+                },
+                "delivery.goal_drive_to_dolly_dropoff": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "dropoff_4",
+                      "tick_period": "250ms"
+                    }
+                }
+            }
+        },
+        {
+            "robot": "str-01",
+            "channel": "mission",
+            "status_channel": "mission_status",
+            "config": {
+                "delivery.goal_approach_dolly_pickup": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "pickup_face_dolly_5",
+                      "tick_period": "250ms"
+                    }
+                },
+                "delivery.goal_drive_to_dolly_dropoff": {
+                    "MapWaypointAsGoal": {
+                      "waypoint": "dropoff_5",
+                      "tick_period": "250ms"
+                    }
+                }
+            }
+        }
+    ]
+}

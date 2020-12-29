@@ -1,0 +1,86 @@
+{
+  "modules": [
+    "visual_slam",
+    "perception"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "svo_grayscale",
+        "subgraph": "packages/visual_slam/apps/stereo_visual_odometry_grayscale.subgraph.json"
+      },
+      {
+        "name": "subgraph",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "interface",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "image_conversion",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ColorConverterLeft",
+            "type": "isaac::perception::ColorSpaceConverter"
+          },
+          {
+            "name": "ColorConverterRight",
+            "type": "isaac::perception::ColorSpaceConverter"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "subgraph/interface/left_image",
+        "target": "image_conversion/ColorConverterLeft/input_image"
+      },
+      {
+        "source": "image_conversion/ColorConverterLeft/output_image",
+        "target": "svo_grayscale.subgraph/interface/left_image"
+      },
+      {
+        "source": "subgraph/interface/right_image",
+        "target": "image_conversion/ColorConverterRight/input_image"
+      },
+      {
+        "source": "image_conversion/ColorConverterRight/output_image",
+        "target": "svo_grayscale.subgraph/interface/right_image"
+      },
+      {
+        "source": "subgraph/interface/left_intrinsics",
+        "target": "svo_grayscale.subgraph/interface/left_intrinsics"
+      },
+      {
+        "source": "subgraph/interface/right_intrinsics",
+        "target": "svo_grayscale.subgraph/interface/right_intrinsics"
+      },
+      {
+        "source": "subgraph/interface/imu",
+        "target": "svo_grayscale.subgraph/interface/imu"
+      }
+    ]
+  },
+  "config": {
+    "image_conversion": {
+      "ColorConverterLeft": {
+        "input_color_space": "rgb",
+        "output_color_space": "grayscale"
+      },
+      "ColorConverterRight": {
+        "input_color_space": "rgb",
+        "output_color_space": "grayscale"
+      }
+    }
+  }
+}

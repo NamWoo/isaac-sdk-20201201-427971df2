@@ -1,0 +1,31 @@
+Copyright (c) 2019-2020, NVIDIA CORPORATION. All rights reserved.
+
+NVIDIA CORPORATION and its licensors retain all intellectual property
+and proprietary rights in and to this software, related documentation
+and any modifications thereto. Any use, reproduction, disclosure or
+distribution of this software and related documentation without an express
+license agreement from NVIDIA CORPORATION is strictly prohibited.
+---
+
+diff --git python/LFLLFisImporter.py python/LFLLFisImporter.py
+index d2812af..5dff4ee 100755
+--- python/LFLLFisImporter.py
++++ python/LFLLFisImporter.py
+@@ -522,8 +522,7 @@ class HeaderWriter:
+         nbOutputs = len(fuzzyValues.outputs)
+         print('Writing file "{}"'.format(fileName))
+         with open(fileName, 'w') as f:
+-            f.write("#ifndef {}\n".format(headerGuard))
+-            f.write("#define {}\n\n".format(headerGuard))
++            f.write("#pragma once\n".format(headerGuard))
+             f.write("#include <lfll/LFLL.h>\n\n")
+             f.write("class {}\n".format(args.className))
+             f.write("{\npublic:\n")
+@@ -535,7 +534,6 @@ class HeaderWriter:
+             f.write("private:\n")
+             f.write("\t{}() ".format(args.className))
+             f.write("{}\n};\n\n")
+-            f.write("#endif // {}\n".format(headerGuard))
+             
+ class ImplWriter:
+     def writeFile(self, args, fuzzyValues):

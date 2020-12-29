@@ -1,0 +1,69 @@
+Copyright (c) 2019-2020, NVIDIA CORPORATION. All rights reserved.
+
+NVIDIA CORPORATION and its licensors retain all intellectual property
+and proprietary rights in and to this software, related documentation
+and any modifications thereto. Any use, reproduction, disclosure or
+distribution of this software and related documentation without an express
+license agreement from NVIDIA CORPORATION is strictly prohibited.
+---
+
+diff --git src/HTTPSocket.h src/HTTPSocket.h
+index ac1de60..a17c6f3 100644
+--- src/HTTPSocket.h
++++ src/HTTPSocket.h
+@@ -189,14 +189,27 @@ struct HttpResponse {
+     // todo: maybe this function should have a fast path for 0 length?
+     void end(const char *message = nullptr, size_t length = 0,
+              void(*callback)(void *httpResponse, void *data, bool cancelled, void *reserved) = nullptr,
+-             void *callbackData = nullptr) {
++             void *callbackData = nullptr,
++             bool is_compressed = false) {
+
+         struct TransformData {
+             bool hasHead;
+         } transformData = {hasHead};
+
+-        struct HttpTransformer {
++        struct HttpCompressedTransformer {
++            // todo: this should get TransformData!
++            static size_t estimate(const char *data, size_t length) {
++                return length + 256;
++            }
++            static size_t transform(const char *src, char *dst, size_t length, TransformData transformData) {
++                // todo: sprintf is extremely slow
++                int offset = transformData.hasHead ? 0 : std::sprintf(dst, "HTTP/1.1 200 OK\r\nContent-Length: %u\r\nVary: Accept-Encoding\r\nContent-Encoding: deflate\r\n\r\n", (unsigned int) length);
++                memcpy(dst + offset, src, length);
++                return length + offset;
++            }
++        };
+
++        struct HttpTransformer {
+             // todo: this should get TransformData!
+             static size_t estimate(const char *data, size_t length) {
+                 return length + 128;
+@@ -211,15 +224,22 @@ struct HttpResponse {
+         };
+
+         if (httpSocket->outstandingResponsesHead != this) {
+-            HttpSocket<true>::Queue::Message *messagePtr = httpSocket->allocMessage(HttpTransformer::estimate(message, length));
+-            messagePtr->length = HttpTransformer::transform(message, (char *) messagePtr->data, length, transformData);
++            const size_t size = is_compressed ? HttpCompressedTransformer::estimate(message, length) : HttpTransformer::estimate(message, length);
++            HttpSocket<true>::Queue::Message *messagePtr = httpSocket->allocMessage(size);
++            messagePtr->length =
++                is_compressed ? HttpCompressedTransformer::transform(message, (char *) messagePtr->data, length, transformData) :
++                                HttpTransformer::transform(message, (char *) messagePtr->data, length, transformData);
+             messagePtr->callback = callback;
+             messagePtr->callbackData = callbackData;
+             messagePtr->nextMessage = messageQueue;
+             messageQueue = messagePtr;
+             hasEnded = true;
+         } else {
+-            httpSocket->sendTransformed<HttpTransformer>(message, length, callback, callbackData, transformData);
++            if (is_compressed) {
++                httpSocket->sendTransformed<HttpCompressedTransformer>(message, length, callback, callbackData, transformData);
++            } else {
++                httpSocket->sendTransformed<HttpTransformer>(message, length, callback, callbackData, transformData);
++            }
+             // move head as far as possible
+             HttpResponse *head = next;
+             while (head) {

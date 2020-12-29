@@ -1,0 +1,23 @@
+# pycapnp is required to run Python Codelets.
+pycapnp==0.6.4
+
+# psutil is needed for navigation evaluation
+psutil==5.7.2
+
+# packages needed for jupyter notebooks
+cython==0.29.21
+numpy==1.19.1
+jupyterlab==2.2.7
+Pillow==7.2.0
+matplotlib==3.3.1
+
+# Dependencies for engine
+numpy-quaternion==2020.7.30.15.57.32
+
+# Dependency for engine/pyalice/gui/composite_widget.py
+ipywidgets==7.5.1
+
+# Dependencies for sensor certification
+getch==1.0
+texttable==1.6.3
+checksumdir==1.2.0

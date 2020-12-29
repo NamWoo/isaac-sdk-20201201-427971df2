@@ -1,0 +1,57 @@
+{
+  "name": "freespace_dnn_inference_image",
+  "modules": [
+    "message_generators"
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "name": "image_feeder",
+        "components": [
+          {
+            "name": "MessageLedger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ImageLoader",
+            "type": "isaac::message_generators::ImageLoader"
+          },
+          {
+            "name": "CameraIntrinsicsGenerator",
+            "type": "isaac::message_generators::CameraIntrinsicsGenerator"
+          }
+        ]
+      },
+      {
+        "name": "inference",
+        "subgraph": "packages/freespace_dnn/apps/freespace_dnn_inference.subgraph.json"
+      }
+    ],
+    "edges": [
+      {
+        "source": "image_feeder/ImageLoader/color",
+        "target": "inference.subgraph/interface/rgb_image"
+      },
+      {
+        "source": "image_feeder/CameraIntrinsicsGenerator/intrinsics",
+        "target": "inference.subgraph/interface/intrinsics"
+      },
+      {
+        "source": "image_feeder/ImageLoader/color",
+        "target": "image_feeder/CameraIntrinsicsGenerator/image"
+      }
+    ]
+  },
+  "config": {
+    "image_feeder": {
+      "ImageLoader": {
+        "color_filename": "./external/path_segmentation_images/warehouse1.png",
+        "tick_period": "1Hz"
+      },
+      "CameraIntrinsicsGenerator": {
+        "focal_length": [100, 100],
+        "optical_center": [500, 500]
+      }
+    }
+  }
+}
