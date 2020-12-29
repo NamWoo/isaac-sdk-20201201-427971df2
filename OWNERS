@@ -1,0 +1,8 @@
+inherited: true
+owners:
+- David Weikersdorfer
+matchers:
+- suffix: .rst
+  owners:
+  - Peter Gambrill
+  - Emily Huang
